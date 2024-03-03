@@ -8,7 +8,7 @@ import swagger_ui_bundle
 from apscheduler.schedulers.background import BackgroundScheduler
 import logging
 import logging.config
-
+import pytz
 import sqlite3
 from base import Base
 from sqlalchemy import create_engine
@@ -151,8 +151,11 @@ def populate_stats():
 def init_scheduler():
     #create a scheduler
     sched = BackgroundScheduler(daemon=True)
+
+    #specify timezone UTC
+    timezone = pytz.timezone('UTC')
     #add the scheduler to run the populate_stats every 5 seconds
-    sched.add_job(populate_stats, 'interval', seconds=app_config['scheduler']['period_sec'])
+    sched.add_job(populate_stats, 'interval', seconds=app_config['scheduler']['period_sec'], timezone=timezone)
     #start the scheduler
     sched.start()
 
