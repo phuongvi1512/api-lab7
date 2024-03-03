@@ -51,7 +51,7 @@ components:
         max_file_size:
           type: integer
           example: 100
-        max_switch_temp:
+        max_temp:
           type: integer
           example: 100
         num_files:
