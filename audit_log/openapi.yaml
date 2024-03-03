@@ -1,0 +1,152 @@
+openapi: 3.0.0
+info:
+  description: This is API for receiver
+  version: "1.0.0"
+  title: Simple Inventory API
+  contact:
+    email: you@your-company.com
+  license:
+    name: Apache 2.0
+    url: 'http://www.apache.org/licenses/LICENSE-2.0.html'
+tags:
+  - name: admins
+    description: Secured Networking Admin-only calls
+  - name: manager
+    description: Mill Manager to inspect the status and temperature of physical switches/routers 
+paths:
+  /switch_report:
+    get:
+      summary: gets a switch report reading from history
+      operationId: app.get_switch_report
+      description: gets switch report from the events store
+      parameters:
+        - name: index
+          in: query
+          description: gets the switch report at the index in the event store
+          schema:
+            type: integer
+            example: 10
+      responses:
+        '200':
+          description: successfully returned a switch report reading
+          content:
+            application/json:
+              schema:
+                type: object
+                items:
+                  $ref: '#/components/schemas/SwitchReport'
+        '400':
+          description: invalid request
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+        '404':
+          description: Not Found
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+  /configuration_file:
+    get:
+      summary: get a configuration file reading from history
+      operationId: app.get_config_file
+      description: get configuration file reading from the event store
+      parameters:
+        - name: index
+          in: query
+          description: get the configuration file at the index in the event store
+          schema:
+            type: integer
+            example: 10
+      responses:
+        '200':
+          description: successfully returned a config file event
+          content:
+            application/json:
+              schema:
+                type: object
+                items:
+                  $ref: '#/components/schemas/Configuration_file'
+        '400':
+          description: invalid request
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+        '404':
+          description: Not Found
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+
+components:
+  schemas:
+    SwitchReport:
+      type: object
+      required:
+        - report_id
+        - switch_id
+        - status
+      properties:
+        trace_id: 
+          type: string
+          format: uuid
+          example: d290f1ee-6c54-4b01-90e6-d701748f0851   
+        report_id: 
+          type: string
+          format: uuid
+          example: d290f1ee-6c54-4b01-90e6-d701748f0851   
+        switch_id:
+          type: string
+          format: uuid
+          example: d290f1ee-6c54-4b01-90e6-d701748f0851
+        status:
+          type: string
+          enum: [OK, Down, Bad]
+          example: Up or Down or Not working properly
+        temperature:
+          type: integer
+          example: 50
+        timestamp:
+          type: string
+          format: date-time
+          
+    Configuration_file:
+      type: object
+      required:
+        - file_id
+        - file_size
+        - switch_id
+      properties:
+        trace_id: 
+          type: string
+          format: uuid
+          example: d290f1ee-6c54-4b01-90e6-d701748f0851   
+        file_id:
+          type: string
+          format: uuid
+          example: d290f1ee-6c54-4b01-90e6-d701748f0851
+        switch_id:
+          type: string
+          format: uuid         
+        file_size:
+          type: integer
+          example: 100
+        timestamp:
+          type: string
+          format: date-time
+          example: '2017-07-21T17:32:28Z'

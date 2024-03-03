@@ -1,0 +1,123 @@
+openapi: 3.0.0
+info:
+  description: This is a API for processing service
+  version: "1.0.0"
+  title: Simple Inventory API
+  contact:
+    email: you@your-company.com
+  license:
+    name: Apache 2.0
+    url: 'http://www.apache.org/licenses/LICENSE-2.0.html'
+tags:
+  - name: admins
+    description: Secured Networking Admin-only calls
+  - name: manager
+    description: Mill Manager to inspect the status and temperature of physical switches/routers 
+paths:
+  /stats:
+    get:
+      summary: Gets the event stats
+      operationId: app.get_stats
+      description: get switch report temperatur not sure
+      responses:
+        '200':
+          description: successfully return a list of event
+          content:
+            application/json:
+              schema:
+                type: object
+                items: 
+                  $ref: '#/components/schemas/ReadingStats'
+        '400':
+          description: fail to return a list of event
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                      
+components:
+  schemas:
+    ReadingStats:
+      type: object
+      required:
+        - max_file_size
+        - max_temperature
+        - num_files
+        - num_reports
+      properties:
+        max_file_size:
+          type: integer
+          example: 100
+        max_switch_temperature:
+          type: integer
+          example: 100
+        num_files:
+          type: integer
+          example: 1000
+        num_reports:
+          type: integer
+          example: 1000
+        
+    SwitchReport:
+      type: object
+      required:
+        - trace_id 
+        - report_id
+        - switch_id
+        - status
+        - temperature
+        - timestamp
+      properties:
+        trace_id:
+          type: string
+          format: uuid
+          example: d290f1ee-6c54-4b01-90e6-d701748f0851   
+        report_id: 
+          type: string
+          format: uuid
+          example: d290f1ee-6c54-4b01-90e6-d701748f0851   
+        switch_id:
+          type: string
+          format: uuid
+          example: d290f1ee-6c54-4b01-90e6-d701748f0851
+        status:
+          type: string
+          enum: [OK, Down, Bad]
+          example: Up or Down or Not working properly
+        temperature:
+          type: integer
+          example: 50
+        timestamp:
+          type: string
+          format: date-time
+          
+    ConfigurationFile:
+      type: object
+      required:
+        - trace_id
+        - file_id
+        - file_size
+        - switch_id
+        - timestamp
+      properties:
+        trace_id: 
+          type: string
+          format: uuid
+          example: d290f1ee-6c54-4b01-90e6-d701748f0851   
+        file_id:
+          type: string
+          format: uuid
+          example: d290f1ee-6c54-4b01-90e6-d701748f0851
+        switch_id:
+          type: string
+          format: uuid         
+        file_size:
+          type: integer
+          example: 100
+        timestamp:
+          type: string
+          format: date-time
+          example: '2017-07-21T17:32:28Z'

@@ -1,0 +1,174 @@
+openapi: 3.0.0
+info:
+  description: This is a API for storage service
+  version: "1.0.0"
+  title: Simple Inventory API
+  contact:
+    email: you@your-company.com
+  license:
+    name: Apache 2.0
+    url: 'http://www.apache.org/licenses/LICENSE-2.0.html'
+tags:
+  - name: admins
+    description: Secured Networking Admin-only calls
+  - name: manager
+    description: Mill Manager to inspect the status and temperature of physical switches/routers 
+paths:
+  # /switch_report:
+    # post:
+    #   tags:
+    #     - admins
+    #   summary: generate a report for switch status and temperature
+    #   operationId: app.add_switch_report
+    #   description: update temperature and status of switch
+    #   responses:
+    #     '201':
+    #       description: item created
+    #     '400':
+    #       description: invalid input, object invalid
+    #   requestBody:
+    #     content:
+    #       application/json:
+    #         schema:
+    #           $ref: '#/components/schemas/SwitchReport'    
+  # /configuration_file:
+    # post:
+    #    tags:
+    #      - admins
+    #    summary: adds a configuration file
+    #    operationId: app.add_config_file
+    #    description: Adds a configuration file of a switch to the system
+    #    responses:
+    #      '201':
+    #        description: item created
+    #      '400':
+    #        description: 'invalid input, object invalid'
+    #    requestBody:
+    #     content:
+    #       application/json:
+    #         schema:
+    #           $ref: '#/components/schemas/ConfigurationFile'
+  /storage_cfile:
+    get:
+      tags:
+        - admins
+      summary: gets configuration file reading
+      operationId: app.get_config_file_reading
+      description: gets configuration file readings added after a timestamp
+      parameters: 
+        - name: start_timestamp
+          in: query
+          description: time that the reading returns after
+          schema:
+            type: string
+            format: date-time
+            example: 2016-08-29T09:12:33.001Z
+        - name: end_timestamp
+          in: query
+          description: time that the reading returns before
+          schema:
+            type: string
+            format: date-time
+            example: 2016-08-29T09:12:33.001Z
+      responses:
+        '200':
+          description: successfully returned a list of reading
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/ConfigurationFile'
+  /storage_report:
+    get:
+      tags:
+        - admins
+      summary: gets report reading
+      operationId: app.get_switch_report_reading
+      description: gets switch report readings added after a timestamp
+      parameters: 
+        - name: start_timestamp
+          in: query
+          description: time that the reading returns after
+          schema:
+            type: string
+            format: date-time
+            example: 2016-08-29T09:12:33.001Z
+        - name: end_timestamp
+          in: query
+          description: time that the reading returns before
+          schema:
+            type: string
+            format: date-time
+            example: 2016-08-29T09:12:33.001Z
+      responses:
+        '200':
+          description: successfully returned a list of reading
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/SwitchReport'                
+components:
+  schemas:
+    SwitchReport:
+      type: object
+      required:
+        - trace_id 
+        - report_id
+        - switch_id
+        - status
+        - temperature
+        - timestamp
+      properties:
+        trace_id:
+          type: string
+          format: uuid
+          example: d290f1ee-6c54-4b01-90e6-d701748f0851   
+        report_id: 
+          type: string
+          format: uuid
+          example: d290f1ee-6c54-4b01-90e6-d701748f0851   
+        switch_id:
+          type: string
+          format: uuid
+          example: d290f1ee-6c54-4b01-90e6-d701748f0851
+        status:
+          type: string
+          enum: [OK, Down, Bad]
+          example: Up or Down or Not working properly
+        temperature:
+          type: integer
+          example: 50
+        timestamp:
+          type: string
+          format: date-time
+          
+    ConfigurationFile:
+      type: object
+      required:
+        - trace_id
+        - file_id
+        - file_size
+        - switch_id
+        - timestamp
+      properties:
+        trace_id: 
+          type: string
+          format: uuid
+          example: d290f1ee-6c54-4b01-90e6-d701748f0851   
+        file_id:
+          type: string
+          format: uuid
+          example: d290f1ee-6c54-4b01-90e6-d701748f0851
+        switch_id:
+          type: string
+          format: uuid         
+        file_size:
+          type: integer
+          example: 100
+        timestamp:
+          type: string
+          format: date-time
+          example: '2017-07-21T17:32:28Z'

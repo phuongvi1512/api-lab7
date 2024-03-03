@@ -1,0 +1,18 @@
+# version: 1
+# datastore:
+#   user: root
+#   password: minhhoing66
+#   hostname: localhost
+#   port: 3306
+#   db: api
+version: 1
+datastore:
+  user: user
+  password: password
+  hostname: 20.121.40.221
+  port: 3306
+  db: events
+events:
+  hostname: 20.121.40.221
+  port: 9092
+  topic: events
