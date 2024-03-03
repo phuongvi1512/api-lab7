@@ -44,14 +44,14 @@ components:
       type: object
       required:
         - max_file_size
-        - max_temperature
+        - max_temp
         - num_files
         - num_reports
       properties:
         max_file_size:
           type: integer
           example: 100
-        max_switch_temperature:
+        max_switch_temp:
           type: integer
           example: 100
         num_files:
@@ -61,63 +61,63 @@ components:
           type: integer
           example: 1000
         
-    SwitchReport:
-      type: object
-      required:
-        - trace_id 
-        - report_id
-        - switch_id
-        - status
-        - temperature
-        - timestamp
-      properties:
-        trace_id:
-          type: string
-          format: uuid
-          example: d290f1ee-6c54-4b01-90e6-d701748f0851   
-        report_id: 
-          type: string
-          format: uuid
-          example: d290f1ee-6c54-4b01-90e6-d701748f0851   
-        switch_id:
-          type: string
-          format: uuid
-          example: d290f1ee-6c54-4b01-90e6-d701748f0851
-        status:
-          type: string
-          enum: [OK, Down, Bad]
-          example: Up or Down or Not working properly
-        temperature:
-          type: integer
-          example: 50
-        timestamp:
-          type: string
-          format: date-time
+    # SwitchReport:
+    #   type: object
+    #   required:
+    #     - trace_id 
+    #     - report_id
+    #     - switch_id
+    #     - status
+    #     - temperature
+    #     - timestamp
+    #   properties:
+    #     trace_id:
+    #       type: string
+    #       format: uuid
+    #       example: d290f1ee-6c54-4b01-90e6-d701748f0851   
+    #     report_id: 
+    #       type: string
+    #       format: uuid
+    #       example: d290f1ee-6c54-4b01-90e6-d701748f0851   
+    #     switch_id:
+    #       type: string
+    #       format: uuid
+    #       example: d290f1ee-6c54-4b01-90e6-d701748f0851
+    #     status:
+    #       type: string
+    #       enum: [OK, Down, Bad]
+    #       example: Up or Down or Not working properly
+    #     temperature:
+    #       type: integer
+    #       example: 50
+    #     timestamp:
+    #       type: string
+    #       format: date-time
           
-    ConfigurationFile:
-      type: object
-      required:
-        - trace_id
-        - file_id
-        - file_size
-        - switch_id
-        - timestamp
-      properties:
-        trace_id: 
-          type: string
-          format: uuid
-          example: d290f1ee-6c54-4b01-90e6-d701748f0851   
-        file_id:
-          type: string
-          format: uuid
-          example: d290f1ee-6c54-4b01-90e6-d701748f0851
-        switch_id:
-          type: string
-          format: uuid         
-        file_size:
-          type: integer
-          example: 100
-        timestamp:
-          type: string
-          format: date-time
-          example: '2017-07-21T17:32:28Z'
+    # ConfigurationFile:
+    #   type: object
+    #   required:
+    #     - trace_id
+    #     - file_id
+    #     - file_size
+    #     - switch_id
+    #     - timestamp
+    #   properties:
+    #     trace_id: 
+    #       type: string
+    #       format: uuid
+    #       example: d290f1ee-6c54-4b01-90e6-d701748f0851   
+    #     file_id:
+    #       type: string
+    #       format: uuid
+    #       example: d290f1ee-6c54-4b01-90e6-d701748f0851
+    #     switch_id:
+    #       type: string
+    #       format: uuid         
+    #     file_size:
+    #       type: integer
+    #       example: 100
+    #     timestamp:
+    #       type: string
+    #       format: date-time
+    #       example: '2017-07-21T17:32:28Z'
