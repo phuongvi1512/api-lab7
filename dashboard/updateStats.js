@@ -1,9 +1,9 @@
 /* UPDATE THESE VALUES TO MATCH YOUR SETUP */
 
-const STATS_API_URL = "http://processing:8100/stats"
+const STATS_API_URL = "http://4.227.136.197:8100/stats"
 const EVENTS_URL = {
-    switch_report: "http://audit_log:8110/switch_report",
-    configuration_file: "http://audit_log:8110/configuration_file"
+    switch_report: "http://4.227.136.197:8110/switch_report",
+    configuration_file: "http://4.227.136.197:8110/configuration_file"
 }
 
 // This function fetches and updates the general statistics
