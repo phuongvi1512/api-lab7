@@ -2,10 +2,10 @@ version: 1
 datastore:
   user: user
   password: password
-  hostname: 20.121.40.221
+  hostname: 4.227.136.197
   port: 3306
   db: events
 events:
-  hostname: 20.121.40.221
+  hostname: 4.227.136.197
   port: 9092
   topic: events
