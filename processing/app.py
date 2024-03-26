@@ -1,5 +1,7 @@
 import connexion
 from connexion import NoContent
+from connexion.middleware import MiddlewarePosition
+from connexion.middleware.cors import CORSMiddleware
 import yaml
 import os
 from datetime import datetime
@@ -161,6 +163,12 @@ def init_scheduler():
 
 app = connexion.FlaskApp(__name__, specification_dir='')
 app.add_api("openapi.yaml", strict_validation=True, validate_responses=True)
+app.add_middleware( CORSMiddleware, 
+                   position=MiddlewarePosition.BEFORE_EXCEPTION, 
+                   allow_origins=["*"], 
+                   allow_credentials=True, 
+                   allow_methods=["*"], 
+                   allow_headers=["*"], )
 
 if __name__ == "__main__":
     if not os.path.exists("stats.sqlite"):

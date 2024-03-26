@@ -2,6 +2,8 @@ import yaml,  datetime, json
 import logging.config
 import connexion
 from connexion import NoContent
+from connexion.middleware import MiddlewarePosition
+from connexion.middleware.cors import CORSMiddleware
 from pykafka import KafkaClient
 from pykafka.common import OffsetType
 from threading import Thread
@@ -71,6 +73,12 @@ def get_switch_report(index):
 
 app = connexion.FlaskApp(__name__, specification_dir='')
 app.add_api("openapi.yaml", strict_validation=True, validate_responses=True)
+app.add_middleware( CORSMiddleware, 
+                   position=MiddlewarePosition.BEFORE_EXCEPTION, 
+                   allow_origins=["*"], 
+                   allow_credentials=True, 
+                   allow_methods=["*"], 
+                   allow_headers=["*"], )
 
 if __name__ == "__main__":
     tl = Thread(target=get_config_file)

@@ -25,8 +25,7 @@ const getStats = (statsUrl) => {
 
 // This function fetches a single event from the audit service
 const getEvent = (eventType) => {
-    const eventIndex = Math.floor(Math.random() * 1000)
-    // const eventIndex = 999999
+    const eventIndex = Math.floor(Math.random() * 100)
 
     fetch(`${EVENTS_URL[eventType]}?index=${eventIndex}`)
         .then(res => {
