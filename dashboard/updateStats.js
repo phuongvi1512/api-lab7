@@ -1,14 +1,9 @@
 /* UPDATE THESE VALUES TO MATCH YOUR SETUP */
 
-// const STATS_API_URL = "http://localhost:8889/statistics"
-// const EVENTS_URL = {
-//     snow: "http://localhost:8889/snow",
-//     lift: "http://localhost:8889/lift"
-// }
-const STATS_API_URL = "http://localhost:8100/stats"
+const STATS_API_URL = "http://processing:8100/stats"
 const EVENTS_URL = {
-    switch_report: "http://localhost:8110/switch_report",
-    configuration_file: "http://localhost:8110/configuration_file"
+    switch_report: "http://audit_log:8110/switch_report",
+    configuration_file: "http://audit_log:8110/configuration_file"
 }
 
 // This function fetches and updates the general statistics
@@ -20,6 +15,7 @@ const getStats = (statsUrl) => {
             updateStatsHTML(result);
         }).catch((error) => {
             updateStatsHTML(error.message, error = true)
+            console.log("ERROR!!!!")
         })
 }
 
