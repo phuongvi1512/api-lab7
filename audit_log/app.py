@@ -3,7 +3,7 @@ import logging.config
 import connexion
 from connexion import NoContent
 from connexion.middleware import MiddlewarePosition
-from connexion.middleware.cors import CORSMiddleware
+from starlette.middleware.cors import CORSMiddleware
 from pykafka import KafkaClient
 from pykafka.common import OffsetType
 from threading import Thread

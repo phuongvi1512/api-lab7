@@ -1,7 +1,7 @@
 import connexion
 from connexion import NoContent
 from connexion.middleware import MiddlewarePosition
-from connexion.middleware.cors import CORSMiddleware
+from starlette.middleware.cors import CORSMiddleware
 import yaml
 import os
 from datetime import datetime
