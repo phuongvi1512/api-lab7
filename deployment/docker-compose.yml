@@ -3,7 +3,6 @@ services:
     build: ../receiver
     ports:
       - "8080:8080"
-    network_mode: host
     depends_on:
       - "storage"
 
@@ -18,6 +17,7 @@ services:
 
   processing:
     build: ../processing
+    network_mode: host
     depends_on:
       - "db"
 
