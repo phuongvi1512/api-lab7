@@ -10,6 +10,8 @@ services:
     build: ../storage
     ports:
       - "8090:8090"
+    expose:
+      - '8090'
     depends_on:
       - "db"
       - "kafka"
@@ -47,6 +49,8 @@ services:
     command: [start-kafka.sh]
     ports:
       - "9092:9092"
+    expose:
+      - '9092'
     hostname: kafka
     environment:
       KAFKA_CREATE_TOPICS: "events:1:1" # topic:partition:replicas
