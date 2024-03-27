@@ -1,7 +1,6 @@
-version: '3.3'
 services:
   receiver:
-    build: ./receiver
+    build: ../receiver
     ports:
       - "8080:8080"
     network_mode: host
@@ -9,7 +8,7 @@ services:
       - "storage"
 
   storage:
-    build: ./storage
+    build: ../storage
     ports:
       - "8090:8090"
     depends_on:
@@ -18,19 +17,19 @@ services:
       - "zookeeper"
 
   processing:
-    build: ./processing
+    build: ../processing
     depends_on:
       - "db"
 
   audit_log:
-    build: ./audit_log
+    build: ../audit_log
     ports:
       - "8110:8110"
     depends_on:
       - "processing"
 
   dashboard:
-    build: ./dashboard
+    build: ../dashboard
     ports:
       - "8888:80"
     depends_on:
