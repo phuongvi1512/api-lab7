@@ -87,4 +87,4 @@ if __name__ == "__main__":
     tl.start()
     tl1.setDaemon(True)
     tl1.start()
-    app.run(port=8110)
+    app.run(host='0.0.0.0',port=8110)
