@@ -42,6 +42,8 @@ services:
     image: wurstmeister/zookeeper
     ports:
       - "2181"
+    volumes:
+      - /home/azureuser/zookeeper/data:/opt/zookeeper-3.4.13/data
     hostname: zookeeper
 
   kafka:
@@ -60,8 +62,11 @@ services:
       KAFKA_ADVERTISED_LISTENERS: INSIDE://localhost:29092,OUTSIDE://pdang-api.eastus.cloudapp.azure.com:9092
       KAFKA_LISTENER_SECURITY_PROTOCOL_MAP: INSIDE:PLAINTEXT,OUTSIDE:PLAINTEXT
       KAFKA_ZOOKEEPER_CONNECT: zookeeper:2181
+      KAFKA_LOG_DIRS: /kafka/kafka-logs
+      KAFKA_BROKER_ID: 1
     volumes:
       - /var/run/docker.sock:/var/run/docker.sock
+      - /home/azureuser/kafka:/kafka/kafka-logs
     depends_on:
       - zookeeper
 
