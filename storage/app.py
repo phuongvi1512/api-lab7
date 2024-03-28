@@ -27,7 +27,7 @@ db = app_config['datastore']['db']
 
 #time to sleep and retry count
 SLEEP_TIME = app_config['retry']['sleep_time']
-MAX_RETRY_COUNT = app_config['retry']['retry_count']
+MAX_RETRY_COUNT = app_config['retry']['max_count']
 
 # open logging file
 with open('log_conf.yml', 'r') as f: 
