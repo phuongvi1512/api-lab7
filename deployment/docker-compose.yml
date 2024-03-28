@@ -54,10 +54,10 @@ services:
     hostname: kafka
     environment:
       KAFKA_CREATE_TOPICS: "events:2:1" # topic:partition:replicas
-      KAFKA_ADVERTISED_HOST_NAME: 4.227.136.197
+      KAFKA_ADVERTISED_HOST_NAME: pdang-api.eastus.cloudapp.azure.com #4.227.136.197
       KAFKA_LISTENERS: INSIDE://:29092,OUTSIDE://:9092
       KAFKA_INTER_BROKER_LISTENER_NAME: INSIDE
-      KAFKA_ADVERTISED_LISTENERS: INSIDE://localhost:29092,OUTSIDE://4.227.136.197:9092
+      KAFKA_ADVERTISED_LISTENERS: INSIDE://localhost:29092,OUTSIDE://pdang-api.eastus.cloudapp.azure.com:9092
       KAFKA_LISTENER_SECURITY_PROTOCOL_MAP: INSIDE:PLAINTEXT,OUTSIDE:PLAINTEXT
       KAFKA_ZOOKEEPER_CONNECT: zookeeper:2181
     volumes:
