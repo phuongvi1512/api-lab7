@@ -13,15 +13,12 @@ services:
     expose:
       - '8090'
     depends_on:
-      - "db"
       - "kafka"
       - "zookeeper"
 
   processing:
     build: ./processing
     network_mode: host
-    depends_on:
-      - "db"
 
   audit_log:
     build: ./audit_log
