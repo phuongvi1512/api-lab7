@@ -16,3 +16,6 @@ events:
   hostname: pdang-api.eastus.cloudapp.azure.com # 4.227.136.197
   port: 9092
   topic: events
+retry:
+  max_count: 5
+  sleep_time: 4

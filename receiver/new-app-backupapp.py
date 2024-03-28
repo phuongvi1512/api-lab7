@@ -16,12 +16,31 @@ with open('app_conf.yml', 'r') as f:
     port = app_config['events']['port']
     topic_name = app_config['events']['topic']
 
+    #time to sleep and retry count
+    SLEEP_TIME = app_config['retry']['sleep_time']
+    MAX_RETRY_COUNT = app_config['retry']['retry_count']
+
 #logging
 with open('log_conf.yml', 'r') as f: 
     log_config = yaml.safe_load(f.read()) 
     logging.config.dictConfig(log_config)
 
 logger = logging.getLogger('basicLogger')
+
+#connect to Kafka
+retry_count = 0
+while retry_count < MAX_RETRY_COUNT:
+    logger.info(f"try to connect to Kafka the {retry_count + 1} time ")
+    try:
+        client = KafkaClient(hosts=f'{hostname}:{port}')
+        topic = client.topics[f'{topic_name}'.encode()]
+        producer = topic.get_sync_producer()
+        break
+    except Exception as e:
+        logger.error(f"failed to connect to Kafka. Error is {e}")
+        sleep(SLEEP_TIME)
+        retry_count += 1
+
 
 def add_switch_report(body):
     content = {
@@ -33,12 +52,6 @@ def add_switch_report(body):
         "temperature": body["temperature"]
     }
 
-    with open('app_conf.yml', 'r') as f: 
-        app_config = yaml.safe_load(f.read())
-
-    client = KafkaClient(hosts=f'{hostname}:{port}')
-    topic = client.topics[f'{topic_name}'.encode()]
-    producer = topic.get_sync_producer()
     msg = {
         "type": "switch_report",
         "datetime": datetime.now().strftime( "%Y-%m-%dT%H:%M:%S"),
@@ -58,9 +71,6 @@ def add_config_file(body):
         "file_size": body["file_size"]
     }
 
-    client = KafkaClient(hosts=f'{hostname}:{port}')
-    topic = client.topics[f'{topic_name}'.encode()]
-    producer = topic.get_sync_producer()
     msg = {
         "type": "configuration_file",
         "datetime": datetime.now().strftime( "%Y-%m-%dT%H:%M:%S"),

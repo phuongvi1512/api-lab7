@@ -4,6 +4,7 @@ from switch_report import SwitchReport
 from configuration_file import ConfigurationFile
 import yaml,  datetime, json
 import logging.config
+from time import sleep
 import connexion
 from connexion import NoContent
 from connexion.middleware import MiddlewarePosition
@@ -23,6 +24,10 @@ password = app_config['datastore']['password']
 hostname = app_config['datastore']['hostname']
 port = app_config['datastore']['port']
 db = app_config['datastore']['db']
+
+#time to sleep and retry count
+SLEEP_TIME = app_config['retry']['sleep_time']
+MAX_RETRY_COUNT = app_config['retry']['retry_count']
 
 # open logging file
 with open('log_conf.yml', 'r') as f: 
@@ -144,6 +149,53 @@ def process_messages():
             logger.error("Unknown event type: %s" % msg['type'])
         #commit the new message as being read
         consumer.commit_offsets()
+
+# def process_messages():
+#     """ process event messages"""
+#     # retry logic, wait until kafka is up
+#     retry_count = 0
+#     hostname = "%s:%d"%(app_config['events']['hostname'], 
+#                         app_config['events']['port'])
+#     while retry_count < MAX_RETRY_COUNT:
+#         #logging when trying to connect to Kafka
+#         logger.info(f"Trying to connect to Kafka {retry_count + 1}th time")
+#         try:
+#             client = KafkaClient(hosts=hostname)
+#             topic = client.topics[str.encode(app_config['events']['topic'])]
+
+#             #create a consumer on a consumer group that only reads new messages
+#             # (uncommitted messages) when the service restarts (i.e, it doesn't
+#             # read all the old messages from the history in the message queue)
+#             consumer = topic.get_simple_consumer(consumer_group=b'event_group',
+#                                                 reset_offset_on_start=False,
+#                                                 auto_offset_reset=OffsetType.LATEST)
+            
+#             for msg in consumer:
+#                 msg_str = msg.value.decode('utf-8')
+#                 msg = json.loads(msg_str)
+#                 logger.info("Message: %s" % msg)
+
+#                 payload = msg['payload']
+
+#                 if msg['type'] == 'switch_report':
+#                     add_switch_report(payload)
+#                     #add log if success or fail
+#                     logger.info(f"Added switch report with id {payload['report_id']}")
+#                 elif msg['type'] == 'configuration_file':
+#                     add_config_file(payload)
+#                     logger.info(f"Added configuration file with id {payload['file_id']}")
+#                 else:
+#                     logger.error("Unknown event type: %s" % msg['type'])
+#                 #commit the new message as being read
+#                 consumer.commit_offsets()
+#             #break the while loop if things work
+#             break
+#         except Exception as e:
+#             logger.error(f"Connection failed the {retry_count + 1}th time")
+#             retry_count += 1
+#             #sleep for a number of seconds
+#             sleep(SLEEP_TIME)
+
 
 app = connexion.FlaskApp(__name__, specification_dir='')
 app.add_api("openapi.yaml", strict_validation=True, validate_responses=True)
