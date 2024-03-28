@@ -35,7 +35,7 @@ with open('log_conf.yml', 'r') as f:
     logging.config.dictConfig(log_config)
 logger = logging.getLogger('basicLogger')
 
-DB_ENGINE = create_engine(f"mysql+pymysql://{username}:{password}@{hostname}:{port}/{db}")
+DB_ENGINE = create_engine(f"mysql+pymysql://{username}:{password}@{hostname}:{port}/{db}", pool_size=10, pool_recycle=3600, pool_pre_ping=True)
 #add log
 logger.info(f"connect to DB {db}. hostname: {hostname}, port: {port}")
 #create database and tables if not exist
