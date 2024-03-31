@@ -1,15 +1,24 @@
 services:
   receiver:
     build: ../receiver
+    environment:
+      - TARGET_ENV=test
     ports:
       - "8080:8080"
+    volumes:
+      - /home/azureuser/config/receiver:/config
     depends_on:
       - "storage"
+      - "kafka"
 
   storage:
     build: ../storage
+    environment:
+      - TARGET_ENV=test
     ports:
       - "8090:8090"
+    volumes:
+      - /home/azureuser/config/storage:/config
     expose:
       - '8090'
     depends_on:
@@ -19,12 +28,20 @@ services:
 
   processing:
     build: ../processing
+    environment:
+      - TARGET_ENV=test    
+    volumes:
+      - /home/azureuser/config/processing:/config
     network_mode: host
     depends_on:
       - "db"
 
   audit_log:
     build: ../audit_log
+    environment:
+      - TARGET_ENV=test
+    volumes:
+      - /home/azureuser/config/audit_log:/config
     ports:
       - "8110:8110"
     depends_on:

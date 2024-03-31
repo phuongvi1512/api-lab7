@@ -18,6 +18,25 @@ from sqlalchemy.orm import sessionmaker
 from create_db import create_db
 from stats_file import StatsFile
 
+if "TARGER_ENV" in os.environ and os.environ["TARGET_ENV"] == "test":
+    print("In Test Environment")
+    app_conf_file = "/config/app_conf.yml"
+    log_conf_file = "/config/log_conf.yml"
+else:
+    print("In Dev Environment")
+    app_conf_file = "app_conf.yml"
+    log_conf_file = "log_conf.yml"
+
+
+# open logging file External Logging Configuration
+with open('log_conf.yml', 'r') as f: 
+    log_config = yaml.safe_load(f.read()) 
+    logging.config.dictConfig(log_config)
+logger = logging.getLogger('basicLogger')
+
+logger.info("App Conf file: %s" % app_conf_file)
+logger.info("Log Conf file: %s" % log_conf_file)
+
 #read from log_conf.yml
 with open('log_conf.yml', 'r') as f:
     log_config = yaml.safe_load(f.read())
