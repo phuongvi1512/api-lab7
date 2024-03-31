@@ -4,7 +4,7 @@ from connexion.middleware import MiddlewarePosition
 from starlette.middleware.cors import CORSMiddleware
 from pykafka import KafkaClient
 from pykafka.common import OffsetType
-import yaml, json
+import yaml, json, os
 import logging, logging.config
 import uuid
 from time import sleep
