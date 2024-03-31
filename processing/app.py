@@ -132,10 +132,6 @@ def populate_stats():
         #write updated stats to sqlite database
         try:
             conn = sqlite3.connect(f'{app_config["datastore"]["filename"]}')
-        except Exception as e:
-            logger.error(f"failed to connect to the sqlite database at {datetime.now()} :%s", e)
-            return NoContent, 404
-        try:
             c = conn.cursor()
             c.execute("INSERT INTO stats_file (num_reports, num_files, max_temp, max_file_size, last_updated) VALUES (?, ?, ?, ?, ?)", (num_reports, num_files, max_temp, max_file_size, cur_time))
             conn.commit()

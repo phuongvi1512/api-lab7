@@ -1,8 +1,4 @@
 version: 1 
-storecfile: 
-  url: http://localhost:8090/configuration_file
-storereport: 
-  url: http://localhost:8090/switch_report
 events:
   hostname: pdang-api.eastus.cloudapp.azure.com #4.227.136.197
   port: 9092

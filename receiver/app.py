@@ -27,6 +27,7 @@ with open('log_conf.yml', 'r') as f:
 
 logger = logging.getLogger('basicLogger')
 
+#connect to Kafka broker
 retry_count = 0
 hostname = "%s:%d"%(app_config['events']['hostname'], 
                     app_config['events']['port'])
@@ -56,10 +57,6 @@ def add_switch_report(body):
         "temperature": body["temperature"]
     }
 
-
-    # client = KafkaClient(hosts=f'{hostname}:{port}')
-    # topic = client.topics[f'{topic_name}'.encode()]
-    # producer = topic.get_sync_producer()
     msg = {
         "type": "switch_report",
         "datetime": datetime.now().strftime( "%Y-%m-%dT%H:%M:%S"),
@@ -79,9 +76,6 @@ def add_config_file(body):
         "file_size": body["file_size"]
     }
 
-    # client = KafkaClient(hosts=f'{hostname}:{port}')
-    # topic = client.topics[f'{topic_name}'.encode()]
-    # producer = topic.get_sync_producer()
     msg = {
         "type": "configuration_file",
         "datetime": datetime.now().strftime( "%Y-%m-%dT%H:%M:%S"),

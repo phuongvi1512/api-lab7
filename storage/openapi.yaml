@@ -14,40 +14,6 @@ tags:
   - name: manager
     description: Mill Manager to inspect the status and temperature of physical switches/routers 
 paths:
-  # /switch_report:
-    # post:
-    #   tags:
-    #     - admins
-    #   summary: generate a report for switch status and temperature
-    #   operationId: app.add_switch_report
-    #   description: update temperature and status of switch
-    #   responses:
-    #     '201':
-    #       description: item created
-    #     '400':
-    #       description: invalid input, object invalid
-    #   requestBody:
-    #     content:
-    #       application/json:
-    #         schema:
-    #           $ref: '#/components/schemas/SwitchReport'    
-  # /configuration_file:
-    # post:
-    #    tags:
-    #      - admins
-    #    summary: adds a configuration file
-    #    operationId: app.add_config_file
-    #    description: Adds a configuration file of a switch to the system
-    #    responses:
-    #      '201':
-    #        description: item created
-    #      '400':
-    #        description: 'invalid input, object invalid'
-    #    requestBody:
-    #     content:
-    #       application/json:
-    #         schema:
-    #           $ref: '#/components/schemas/ConfigurationFile'
   /storage_cfile:
     get:
       tags:
