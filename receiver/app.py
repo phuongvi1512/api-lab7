@@ -4,12 +4,11 @@ from connexion.middleware import MiddlewarePosition
 from starlette.middleware.cors import CORSMiddleware
 from pykafka import KafkaClient
 from pykafka.common import OffsetType
-from datetime import datetime
-import requests
 import yaml, json
 import logging, logging.config
 import uuid
 from time import sleep
+from datetime import datetime
 
 with open('app_conf.yml', 'r') as f: 
     app_config = yaml.safe_load(f.read())  
@@ -39,12 +38,12 @@ while retry_count < MAX_RETRY_COUNT:
         topic = client.topics[str.encode(app_config['events']['topic'])]
 
         producer = topic.get_sync_producer()
+        break
     except Exception as e:
         logger.error(f"Connection failed the {retry_count + 1}th time")
-        retry_count += 1
         #sleep for a number of seconds
         sleep(SLEEP_TIME)    
-    
+        retry_count += 1  
 
 
 def add_switch_report(body):
