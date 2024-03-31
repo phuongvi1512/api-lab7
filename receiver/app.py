@@ -3,6 +3,7 @@ from connexion import NoContent
 from connexion.middleware import MiddlewarePosition
 from starlette.middleware.cors import CORSMiddleware
 from pykafka import KafkaClient
+from pykafka.common import OffsetType
 from datetime import datetime
 import requests
 import yaml, json
@@ -16,12 +17,35 @@ with open('app_conf.yml', 'r') as f:
     port = app_config['events']['port']
     topic_name = app_config['events']['topic']
 
+#time to sleep and retry count
+SLEEP_TIME = app_config['retry']['sleep_time']
+MAX_RETRY_COUNT = app_config['retry']['max_count']
+
 #logging
 with open('log_conf.yml', 'r') as f: 
     log_config = yaml.safe_load(f.read()) 
     logging.config.dictConfig(log_config)
 
 logger = logging.getLogger('basicLogger')
+
+retry_count = 0
+hostname = "%s:%d"%(app_config['events']['hostname'], 
+                    app_config['events']['port'])
+while retry_count < MAX_RETRY_COUNT:
+    #logging when trying to connect to Kafka
+    logger.info(f"Trying to connect to Kafka {retry_count + 1}th time")
+    try:
+        client = KafkaClient(hosts=hostname)
+        topic = client.topics[str.encode(app_config['events']['topic'])]
+
+        producer = topic.get_sync_producer()
+    except Exception as e:
+        logger.error(f"Connection failed the {retry_count + 1}th time")
+        retry_count += 1
+        #sleep for a number of seconds
+        sleep(SLEEP_TIME)    
+    
+
 
 def add_switch_report(body):
     content = {
@@ -33,12 +57,10 @@ def add_switch_report(body):
         "temperature": body["temperature"]
     }
 
-    with open('app_conf.yml', 'r') as f: 
-        app_config = yaml.safe_load(f.read())
 
-    client = KafkaClient(hosts=f'{hostname}:{port}')
-    topic = client.topics[f'{topic_name}'.encode()]
-    producer = topic.get_sync_producer()
+    # client = KafkaClient(hosts=f'{hostname}:{port}')
+    # topic = client.topics[f'{topic_name}'.encode()]
+    # producer = topic.get_sync_producer()
     msg = {
         "type": "switch_report",
         "datetime": datetime.now().strftime( "%Y-%m-%dT%H:%M:%S"),
@@ -58,9 +80,9 @@ def add_config_file(body):
         "file_size": body["file_size"]
     }
 
-    client = KafkaClient(hosts=f'{hostname}:{port}')
-    topic = client.topics[f'{topic_name}'.encode()]
-    producer = topic.get_sync_producer()
+    # client = KafkaClient(hosts=f'{hostname}:{port}')
+    # topic = client.topics[f'{topic_name}'.encode()]
+    # producer = topic.get_sync_producer()
     msg = {
         "type": "configuration_file",
         "datetime": datetime.now().strftime( "%Y-%m-%dT%H:%M:%S"),
