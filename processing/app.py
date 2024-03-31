@@ -18,14 +18,14 @@ from sqlalchemy.orm import sessionmaker
 from create_db import create_db
 from stats_file import StatsFile
 
-#read from log_conf.yaml
-with open('log_conf.yaml', 'r') as f:
+#read from log_conf.yml
+with open('log_conf.yml', 'r') as f:
     log_config = yaml.safe_load(f.read())
     logging.config.dictConfig(log_config)
 logger = logging.getLogger('basicLogger')
 
 #read from app_conf.yaml
-with open('app_conf.yaml', 'r') as f:
+with open('app_conf.yml', 'r') as f:
     app_config = yaml.safe_load(f.read())
 
 DB_ENGINE = create_engine(f"sqlite:///{app_config['datastore']['filename']}")
