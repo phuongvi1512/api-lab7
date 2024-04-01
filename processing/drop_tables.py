@@ -1,6 +1,6 @@
 import sqlite3
 
-conn = sqlite3.connect('stats.sqlite')
+conn = sqlite3.connect('/data/stats.sqlite')
 
 c = conn.cursor()
 c.execute('''

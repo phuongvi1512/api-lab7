@@ -7,7 +7,7 @@ services:
       - "8080:8080"
     volumes:
       - /home/azureuser/config/receiver:/config
-      - /home/azureuser/logs:/logs
+      - /home/azureuser/logs/receiver:/logs
     depends_on:
       - "storage"
       - "kafka"
@@ -20,7 +20,7 @@ services:
       - "8090:8090"
     volumes:
       - /home/azureuser/config/storage:/config
-      - /home/azureuser/logs:/logs
+      - /home/azureuser/logs/storage:/logs
     expose:
       - '8090'
     depends_on:
@@ -34,7 +34,7 @@ services:
       - TARGET_ENV=test    
     volumes:
       - /home/azureuser/config/processing:/config
-      - /home/azureuser/logs:/logs
+      - /home/azureuser/logs/processing:/logs
       - processing-db:/data
     network_mode: host
     depends_on:
@@ -46,7 +46,7 @@ services:
       - TARGET_ENV=test
     volumes:
       - /home/azureuser/config/audit_log:/config
-      - /home/azureuser/logs:/logs
+      - /home/azureuser/logs/audit_log:/logs
     ports:
       - "8110:8110"
     depends_on:
