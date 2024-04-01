@@ -186,7 +186,7 @@ app.add_middleware( CORSMiddleware,
                    allow_headers=["*"], )
 
 if __name__ == "__main__":
-    if not os.path.exists("stats.sqlite"):
+    if not os.path.exists("/data/stats.sqlite"):
         create_db()
     init_scheduler()
     app.run(host='0.0.0.0',port=8100)

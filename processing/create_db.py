@@ -1,7 +1,7 @@
 import sqlite3
 
 def create_db():
-    conn = sqlite3.connect('stats.sqlite')
+    conn = sqlite3.connect('/data/stats.sqlite')
     c = conn.cursor()
 
     #create table stats_file
