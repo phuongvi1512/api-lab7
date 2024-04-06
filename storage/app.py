@@ -48,8 +48,8 @@ SLEEP_TIME = app_config['retry']['sleep_time']
 MAX_RETRY_COUNT = app_config['retry']['max_count']
 
 # open logging file
-with open('log_conf.yml', 'r') as f: 
-    log_config = yaml.safe_load(f.read()) 
+with open('log_conf.yml', 'r') as f:
+    log_config = yaml.safe_load(f.read())
     logging.config.dictConfig(log_config)
 logger = logging.getLogger('basicLogger')
 
@@ -77,7 +77,7 @@ def add_switch_report(body):
     session.commit()
     session.close()
 
-    logger.debug(f"stored event add report {body['trace_id']}")   
+    logger.debug(f"stored event add report {body['trace_id']}")
     return NoContent, 201
 
 
@@ -93,13 +93,11 @@ def add_config_file(body):
                    trace_id=body['trace_id'])
 
     session.add(cfile)
-
     session.commit()
     session.close()
 
-
     #add debug msg
-    logger.debug(f"stored event add configuration file {body['trace_id']}")   
+    logger.debug(f"stored event add configuration file {body['trace_id']}")
     return NoContent, 201
 
 def get_config_file_reading(start_timestamp, end_timestamp):
@@ -140,7 +138,7 @@ def process_messages():
     """ process event messages"""
     # retry logic, wait until kafka is up
     retry_count = 0
-    hostname = "%s:%d"%(app_config['events']['hostname'], 
+    hostname = "%s:%d"%(app_config['events']['hostname'],
                         app_config['events']['port'])
     while retry_count < MAX_RETRY_COUNT:
         #logging when trying to connect to Kafka

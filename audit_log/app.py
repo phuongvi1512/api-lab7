@@ -1,13 +1,14 @@
-import yaml,  datetime, json, os
+import datetime, json, os
 import logging.config
+import swagger_ui_bundle
+import yaml
+from threading import Thread
 import connexion
 from connexion import NoContent
 from connexion.middleware import MiddlewarePosition
 from starlette.middleware.cors import CORSMiddleware
 from pykafka import KafkaClient
 from pykafka.common import OffsetType
-from threading import Thread
-import swagger_ui_bundle
 
 if "TARGER_ENV" in os.environ and os.environ["TARGET_ENV"] == "test":
     print("In Test Environment")

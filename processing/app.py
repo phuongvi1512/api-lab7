@@ -1,17 +1,17 @@
-import connexion
-from connexion import NoContent
-from connexion.middleware import MiddlewarePosition
-from starlette.middleware.cors import CORSMiddleware
-import yaml
 import os
 from datetime import datetime
 import requests
-import swagger_ui_bundle
-from apscheduler.schedulers.background import BackgroundScheduler
 import logging
 import logging.config
 import pytz
 import sqlite3
+import yaml
+import swagger_ui_bundle
+from apscheduler.schedulers.background import BackgroundScheduler
+import connexion
+from connexion import NoContent
+from connexion.middleware import MiddlewarePosition
+from starlette.middleware.cors import CORSMiddleware
 from base import Base
 from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker

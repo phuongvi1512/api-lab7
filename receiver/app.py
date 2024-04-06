@@ -1,14 +1,15 @@
+import json, os
+import logging, logging.config
+import uuid
+from time import sleep
+from datetime import datetime
+import yaml
 import connexion
 from connexion import NoContent
 from connexion.middleware import MiddlewarePosition
 from starlette.middleware.cors import CORSMiddleware
 from pykafka import KafkaClient
 from pykafka.common import OffsetType
-import yaml, json, os
-import logging, logging.config
-import uuid
-from time import sleep
-from datetime import datetime
 
 if "TARGER_ENV" in os.environ and os.environ["TARGET_ENV"] == "test":
     print("In Test Environment")
