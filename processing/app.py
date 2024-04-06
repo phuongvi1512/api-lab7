@@ -18,6 +18,8 @@ from sqlalchemy.orm import sessionmaker
 from create_db import create_db
 from stats_file import StatsFile
 
+
+# Reading from external configuration files:
 if "TARGER_ENV" in os.environ and os.environ["TARGET_ENV"] == "test":
     print("In Test Environment")
     app_conf_file = "/config/app_conf.yml"
@@ -46,6 +48,7 @@ logger = logging.getLogger('basicLogger')
 #read from app_conf.yaml
 with open('app_conf.yml', 'r') as f:
     app_config = yaml.safe_load(f.read())
+THRESHOLD = app_config['eventstore']['default_threshold']
 
 DB_ENGINE = create_engine(f"sqlite:///{app_config['datastore']['filename']}")
 Base.metadata.create_all(DB_ENGINE)
@@ -58,7 +61,6 @@ def get_stats():
     session = DB_SESSION()
     #query the stats_file table to get the latest stats
     stats = session.query(StatsFile).order_by(StatsFile.last_updated.desc()).first()
-    print("#"*50)
 
     if stats is None:
         return {
@@ -90,7 +92,6 @@ def populate_stats():
 
     #if there is no result, then add the stats file
     if result is None:
-        print("result is None")
         cur_stats = {
             "last_updated": "2024-01-01 23:07:07.912972",
             "num_reports": 0,
@@ -100,8 +101,6 @@ def populate_stats():
         }
     else:
         #if there is a result, then get the last_updated and add the stats file
-        print("#"*50)
-        print(result)
         cur_stats = {
             "last_updated": result[5],
             "num_reports": result[1],
@@ -129,6 +128,11 @@ def populate_stats():
         #get the json object from the response
         report_info = report_body.json()
         cfile_info = cfile_body.json()
+
+        #publish if over threshold
+        if len(report_info) >= THRESHOLD or len(cfile_info) >= THRESHOLD:
+            pass
+
 
         #log msg number of events received
         logger.info(f"received {len(report_info)} reports and {len(cfile_info)} cfiles at {datetime.now()}")

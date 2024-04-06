@@ -58,10 +58,24 @@ DB_ENGINE = create_engine(f"mysql+pymysql://{username}:{password}@{hostname}:{po
 logger.info(f"connect to DB {db}. hostname: {hostname}, port: {port}")
 #create database and tables if not exist
 
-#create_tables(hostname=hostname, username=username, password=password, db=db)
 Base.metadata.bind = DB_ENGINE
 
 DB_SESSION = sessionmaker(bind=DB_ENGINE)
+
+def publish_event_logger():
+    content = {
+        "trace_id": f"{str(uuid.uuid4())}",
+        "code_id": "0001",
+        "timestamp": f"{datetime.now()}",
+    }
+    msg = {
+        "type": "logging msg from storage service",
+        "datetime": datetime.now().strftime( "%Y-%m-%dT%H:%M:%S"),
+        "msg_text": "Code 0002. Successfully start and connect to Kafka. Ready to consume messages"
+        "payload": content
+    }
+    msg_str = json.dumps(msg)
+    log_producer.produce(str.encode(msg_str))
 
 def add_switch_report(body):
     """ Receives a switch report """
@@ -147,6 +161,12 @@ def process_messages():
             client = KafkaClient(hosts=hostname)
             topic = client.topics[str.encode(app_config['events']['topic'])]
 
+            #publish msg to event_log if successfully start and connect to Kafka
+            #ready to consume messages from events topic
+            log_topic = client.topics[str.encode(app_config['events']['log_topic'])]
+            log_producer = log_topic.get_sync_producer()
+            publish_event_logger()
+
             #create a consumer on a consumer group that only reads new messages
             # (uncommitted messages) when the service restarts (i.e, it doesn't
             # read all the old messages from the history in the message queue)
@@ -175,7 +195,7 @@ def process_messages():
             #break the while loop if things work
             break
         except Exception as e:
-            logger.error(f"Connection failed the {retry_count + 1}th time")
+            logger.error(f"Connection failed the {retry_count + 1}th time, error is {e}")
             retry_count += 1
             #sleep for a number of seconds
             sleep(SLEEP_TIME)

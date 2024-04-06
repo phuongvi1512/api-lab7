@@ -56,15 +56,35 @@ while retry_count < MAX_RETRY_COUNT:
     try:
         client = KafkaClient(hosts=hostname)
         topic = client.topics[str.encode(app_config['events']['topic'])]
-
         producer = topic.get_sync_producer()
+        
+        #publish msg to event_log if successfully start and connect to Kafka
+        #ready to receive msg on RESTful API
+        log_topic = client.topics[str.encode(app_config['events']['log_topic'])]
+        log_producer = log_topic.get_sync_producer()
+
+        publish_event_logger()
         break
     except Exception as e:
-        logger.error(f"Connection failed the {retry_count + 1}th time")
+        logger.error(f"Connection failed the {retry_count + 1}th time, error is {e}")
         #sleep for a number of seconds
         sleep(SLEEP_TIME)    
         retry_count += 1  
 
+def publish_event_logger():
+    content = {
+        "trace_id": f"{str(uuid.uuid4())}",
+        "code_id": "0001",
+        "timestamp": f"{datetime.now()}",
+    }
+    msg = {
+        "type": "logging msg from receiver service",
+        "datetime": datetime.now().strftime( "%Y-%m-%dT%H:%M:%S"),
+        "msg_text": "Code 0001. Successfully start and connect to Kafka. Ready to receive message"
+        "payload": content
+    }
+    msg_str = json.dumps(msg)
+    log_producer.produce(str.encode(msg_str))
 
 def add_switch_report(body):
     content = {

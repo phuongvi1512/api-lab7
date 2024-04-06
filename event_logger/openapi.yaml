@@ -1,0 +1,63 @@
+openapi: 3.0.0
+info:
+  description: This is a API for event logging service
+  version: "1.0.0"
+  title: Simple Inventory API
+  contact:
+    email: you@your-company.com
+  license:
+    name: Apache 2.0
+    url: 'http://www.apache.org/licenses/LICENSE-2.0.html'
+tags:
+  - name: admins
+    description: Secured Networking Admin-only calls
+  - name: manager
+    description: Mill Manager to inspect the status and temperature of physical switches/routers 
+paths:
+  /events_stats:
+    get:
+      summary: Gets the event stats
+      operationId: app.get_events_stats
+      description: return number of events of each code
+      responses:
+        '200':
+          description: successfully return a list of event
+          content:
+            application/json:
+              schema:
+                type: object
+                items: 
+                  $ref: '#/components/schemas/ReadingEventStats'
+        '400':
+          description: fail to return a list of event
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                      
+components:
+  schemas:
+    ReadingEventStats:
+      type: object
+      required:
+        - "0001"
+        - "0002"
+        - "0003"
+        - "0004"
+      properties:
+        "0001":
+          type: integer
+          example: 10
+        "0002":
+          type: integer
+          example: 10
+        "0003":
+          type: integer
+          example: 10
+        "0004":
+          type: integer
+          example: 10
+

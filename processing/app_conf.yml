@@ -3,5 +3,7 @@ datastore:
   filename: /data/stats.sqlite
 scheduler:
   period_sec: 5
+  
 eventstore:
   url: http://localhost:8090
+  default_threshold: 25
