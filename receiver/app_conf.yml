@@ -1,6 +1,6 @@
 version: 1 
 events:
-  hostname: pdang-api.eastus.cloudapp.azure.com #4.227.136.197
+  hostname: kafka
   port: 9092
   topic: events
 retry:

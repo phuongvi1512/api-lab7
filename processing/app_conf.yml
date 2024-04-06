@@ -4,4 +4,4 @@ datastore:
 scheduler:
   period_sec: 5
 eventstore:
-  url: http://pdang-api.eastus.cloudapp.azure.com:8090 #http://localhost:8090
+  url: http://localhost:8090

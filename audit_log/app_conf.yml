@@ -2,10 +2,10 @@ version: 1
 datastore:
   user: user
   password: password
-  hostname: pdang-api.eastus.cloudapp.azure.com #4.227.136.197
+  hostname: db
   port: 3306
   db: events
 events:
-  hostname: pdang-api.eastus.cloudapp.azure.com # 4.227.136.197
+  hostname: kafka
   port: 9092
   topic: events

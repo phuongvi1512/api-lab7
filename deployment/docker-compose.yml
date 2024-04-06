@@ -5,6 +5,7 @@ services:
       - TARGET_ENV=test
     ports:
       - "8080:8080"
+    hostname: receiver
     volumes:
       - /home/azureuser/config/receiver:/config
       - /home/azureuser/logs/:/logs
@@ -18,6 +19,7 @@ services:
       - TARGET_ENV=test
     ports:
       - "8090:8090"
+    hostname: storage
     volumes:
       - /home/azureuser/config/storage:/config
       - /home/azureuser/logs/:/logs
@@ -36,6 +38,7 @@ services:
       - /home/azureuser/config/processing:/config
       - /home/azureuser/logs/:/logs
       - processing-db:/data
+    hostname: processing
     network_mode: host
     depends_on:
       - "db"
@@ -49,6 +52,7 @@ services:
       - /home/azureuser/logs/:/logs
     ports:
       - "8110:8110"
+    hostname: audit_log
     depends_on:
       - "processing"
 
@@ -77,11 +81,11 @@ services:
       - '9092'
     hostname: kafka
     environment:
-      KAFKA_CREATE_TOPICS: "events:2:2" # topic:partition:replicas
-      KAFKA_ADVERTISED_HOST_NAME: pdang-api.eastus.cloudapp.azure.com #4.227.136.197
+      KAFKA_CREATE_TOPICS: "events:1:!" # topic:partition:replicas
+      KAFKA_ADVERTISED_HOST_NAME: kafka
       KAFKA_LISTENERS: INSIDE://:29092,OUTSIDE://:9092
       KAFKA_INTER_BROKER_LISTENER_NAME: INSIDE
-      KAFKA_ADVERTISED_LISTENERS: INSIDE://localhost:29092,OUTSIDE://pdang-api.eastus.cloudapp.azure.com:9092
+      KAFKA_ADVERTISED_LISTENERS: INSIDE://kafka:29092,OUTSIDE://kafka:9092
       KAFKA_LISTENER_SECURITY_PROTOCOL_MAP: INSIDE:PLAINTEXT,OUTSIDE:PLAINTEXT
       KAFKA_ZOOKEEPER_CONNECT: zookeeper:2181
       KAFKA_LOG_DIRS: /kafka/kafka-logs
