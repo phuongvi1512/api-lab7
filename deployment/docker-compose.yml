@@ -56,6 +56,22 @@ services:
     depends_on:
       - "processing"
 
+  event_logger:
+    build: ../event_logger
+    environment:
+      - TARGET_ENV=test
+    volumes:
+      - /home/azureuser/config/event_logger:/config
+      - /home/azureuser/logs/:/logs
+      - logging-db:/db
+    ports:
+      - "8120:8120"
+    hostname: event_logger
+    depends_on:
+      - "processing"
+      - "receiver"
+      - "storage"
+
   dashboard:
     build: ../dashboard
     ports:

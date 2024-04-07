@@ -48,7 +48,10 @@ logger = logging.getLogger('basicLogger')
 #read from app_conf.yaml
 with open('app_conf.yml', 'r') as f:
     app_config = yaml.safe_load(f.read())
+
 THRESHOLD = app_config['eventstore']['default_threshold']
+MAX_RETRY_COUNT = app_config['retry']['max_count']
+SLEEP_TIME = app_config['retry']['sleep_time']
 
 DB_ENGINE = create_engine(f"sqlite:///{app_config['datastore']['filename']}")
 Base.metadata.create_all(DB_ENGINE)
@@ -71,7 +74,6 @@ def get_stats():
             "max_file_size": 0
 
         }
-    print(stats.to_dict())
     #close the connection
     session.close()
     return stats.to_dict(), 200
@@ -131,9 +133,33 @@ def populate_stats():
 
         #publish if over threshold
         if len(report_info) >= THRESHOLD or len(cfile_info) >= THRESHOLD:
-            pass
-
-
+            retry_count = 0
+            hostname = "%s:%d"%(app_config['events']['hostname'],
+                                app_config['events']['port'])
+            while retry_count < MAX_RETRY_COUNT:
+                #logging when trying to connect to Kafka
+                logger.info(f"Trying to connect to Kafka {retry_count + 1}th time")
+                try:
+                    client = KafkaClient(hosts=hostname)
+                    #publish msg to event_log if successfully start and connect to Kafka
+                    #ready to consume messages from events topic
+                    log_topic = client.topics[str.encode(app_config['events']['log_topic'])]
+                    log_producer = log_topic.get_sync_producer()
+                    content = {
+                            "trace_id": f"{str(uuid.uuid4())}",
+                            "code_id": "0004",
+                            "timestamp": f"{datetime.now()}",
+                        }
+                    msg = {
+                        "type": "logging msg from storage service",
+                        "datetime": datetime.now().strftime( "%Y-%m-%dT%H:%M:%S"),
+                        "msg_text": "Code 0004. Number of events over threshold"
+                        "payload": content
+                    }
+                    msg_str = json.dumps(msg)
+                    log_producer.produce(str.encode(msg_str))
+                except Exception as e:
+                    logger.info("Failed to connect to kafka. Error is %d" % e)
         #log msg number of events received
         logger.info(f"received {len(report_info)} reports and {len(cfile_info)} cfiles at {datetime.now()}")
 
