@@ -74,11 +74,10 @@ while retry_count < MAX_RETRY_COUNT:
 def publish_event_logger():
     content = {
         "trace_id": f"{str(uuid.uuid4())}",
-        "code_id": "0001",
         "timestamp": f"{datetime.now()}",
     }
     msg = {
-        "type": "logging msg from receiver service",
+        "code": "0001",
         "datetime": datetime.now().strftime( "%Y-%m-%dT%H:%M:%S"),
         "msg_text": "Code 0001. Successfully start and connect to Kafka. Ready to receive message"
         "payload": content
