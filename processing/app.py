@@ -147,11 +147,10 @@ def populate_stats():
                     log_producer = log_topic.get_sync_producer()
                     content = {
                             "trace_id": f"{str(uuid.uuid4())}",
-                            "code_id": "0004",
-                            "timestamp": f"{datetime.now()}",
+                            "timestamp": f"{datetime.now()}"
                         }
                     msg = {
-                        "type": "logging msg from storage service",
+                        "code": "0004"
                         "datetime": datetime.now().strftime( "%Y-%m-%dT%H:%M:%S"),
                         "msg_text": "Code 0004. Number of events over threshold"
                         "payload": content
