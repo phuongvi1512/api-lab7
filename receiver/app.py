@@ -78,7 +78,7 @@ def publish_event_logger():
     }
     msg = {
         "code": "0001",
-        "datetime": f"{datetime.now().strftime( "%Y-%m-%dT%H:%M:%S")}",
+        "datetime": f"{datetime.now().strftime('%Y-%m-%dT%H:%M:%S')}",
         "msg_text": "Code 0001. Successfully start and connect to Kafka. Ready to receive message",
         "payload": content
     }

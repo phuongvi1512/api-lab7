@@ -98,7 +98,7 @@ def populate_stats():
                 }
             msg = {
                 "code": "0003"
-                "datetime": f"{datetime.now().strftime( "%Y-%m-%dT%H:%M:%S")}",
+                "datetime": f"{datetime.now().strftime( '%Y-%m-%dT%H:%M:%S')}",
                 "msg_text": "Code 0003. App successfully started",
                 "payload": content
             }
@@ -168,7 +168,7 @@ def populate_stats():
             }
             msg = {
                 "code": "0004"
-                "datetime": datetime.now().strftime( "%Y-%m-%dT%H:%M:%S"),
+                "datetime": f"{datetime.now().strftime('%Y-%m-%dT%H:%M:%S')}",
                 "payload": content
             }
             msg_str = json.dumps(msg)
