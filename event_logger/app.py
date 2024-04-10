@@ -59,8 +59,7 @@ def add_event_stats(body):
     session = DB_SESSION()
     event_record = EventStats( trace_id=body['trace_id'],
         message_code=body['code'], 
-        message=body['msg_text'],
-        last_updated=body['timestamp'])
+        message=body['msg_text'])
 
     session.add(event_record)
     session.commit()

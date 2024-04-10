@@ -11,6 +11,8 @@ from apscheduler.schedulers.background import BackgroundScheduler
 import connexion
 from connexion import NoContent
 from connexion.middleware import MiddlewarePosition
+from pykafka import KafkaClient
+from pykafka.common import OffsetType
 from starlette.middleware.cors import CORSMiddleware
 from base import Base
 from sqlalchemy import create_engine
@@ -106,7 +108,7 @@ def populate_stats():
             msg_str = json.dumps(msg)
             log_producer.produce(str.encode(msg_str))
         except Exception as e:
-            logger.info("Failed to connect to kafka. Error is %d" % e)
+            logger.info(f"Failed to connect to kafka. Error is {e}")
 
     #starting log msg
     logger.info(f"periodically updating stats at {datetime.now()}")
