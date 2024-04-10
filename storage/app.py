@@ -2,7 +2,7 @@ from base import Base
 from create_tables_mysql import create_tables
 from switch_report import SwitchReport
 from configuration_file import ConfigurationFile
-import yaml,  datetime, json, os
+import yaml,  datetime, json, os, uuid
 import logging.config
 from time import sleep
 import connexion
