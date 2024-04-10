@@ -45,6 +45,19 @@ with open('log_conf.yml', 'r') as f:
     logging.config.dictConfig(log_config)
 
 logger = logging.getLogger('basicLogger')
+def publish_event_logger():
+    content = {
+        "trace_id": f"{str(uuid.uuid4())}",
+        "timestamp": f"{datetime.now()}",
+    }
+    msg = {
+        "code": "0001",
+        "datetime": datetime.now().strftime('%Y-%m-%dT%H:%M:%S'),
+        "msg_text": "Code 0001. Successfully start and connect to Kafka. Ready to receive message",
+        "payload": content
+    }
+    msg_str = json.dumps(msg)
+    log_producer.produce(str.encode(msg_str))
 
 #connect to Kafka broker
 retry_count = 0
@@ -71,20 +84,7 @@ while retry_count < MAX_RETRY_COUNT:
         sleep(SLEEP_TIME)    
         retry_count += 1  
 
-def publish_event_logger():
-    content = {
-        "trace_id": f"{str(uuid.uuid4())}",
-        "timestamp": f"{datetime.now()}",
-    }
-    msg = {
-        "code": "0001",
-        #"datetime": f"{datetime.now().strftime('%Y-%m-%dT%H:%M:%S')}",
-        'datetime': f"{datetime.now().strftime('%Y-%m-%dT%H:%M:%S')}",
-        "msg_text": "Code 0001. Successfully start and connect to Kafka. Ready to receive message",
-        "payload": content
-    }
-    msg_str = json.dumps(msg)
-    log_producer.produce(str.encode(msg_str))
+
 
 def add_switch_report(body):
     content = {
@@ -118,7 +118,7 @@ def add_config_file(body):
 
     msg = {
         "type": "configuration_file",
-        'datetime': f"{datetime.now().strftime('%Y-%m-%dT%H:%M:%S')}",
+        "datetime": datetime.now().strftime('%Y-%m-%dT%H:%M:%S'),
        # "datetime": f"{datetime.now().strftime( "%Y-%m-%dT%H:%M:%S")}",
         "payload": content
     }

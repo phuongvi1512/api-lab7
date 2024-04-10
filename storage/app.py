@@ -71,7 +71,7 @@ def publish_event_logger():
     }
     msg = {
         "code": "0002",
-        'datetime': f"{datetime.now().strftime('%Y-%m-%dT%H:%M:%S')}",
+        "datetime": datetime.datetime.now().strftime('%Y-%m-%dT%H:%M:%S'),
        # "datetime": f"{datetime.datetime.now().strftime('%Y-%m-%dT%H:%M:%S')}", 
         "payload": content
     }
