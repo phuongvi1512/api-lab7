@@ -64,13 +64,14 @@ DB_SESSION = sessionmaker(bind=DB_ENGINE)
 
 def publish_event_logger():
     content = {
+        "code": "0002",
         "trace_id": f"{str(uuid.uuid4())}",
         "timestamp": f"{datetime.now()}",
+        "msg_text": "Code 0002. Successfully start and connect to Kafka. Ready to consume messages"
     }
     msg = {
         "code": "0002",
-        "datetime": datetime.now().strftime( "%Y-%m-%dT%H:%M:%S"),
-        "msg_text": "Code 0002. Successfully start and connect to Kafka. Ready to consume messages"
+        "datetime": datetime.now().strftime( "%Y-%m-%dT%H:%M:%S"), 
         "payload": content
     }
     msg_str = json.dumps(msg)

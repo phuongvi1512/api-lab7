@@ -7,7 +7,7 @@ from connexion import NoContent
 from connexion.middleware import MiddlewarePosition
 from starlette.middleware.cors import CORSMiddleware
 from sqlalchemy import create_engine
-from sqlalchemy import and_
+from sqlalchemy import and_, func
 from sqlalchemy.orm import sessionmaker
 from pykafka import KafkaClient
 from pykafka.common import OffsetType
@@ -44,54 +44,35 @@ with open('log_conf.yml', 'r') as f:
     logging.config.dictConfig(log_config)
 logger = logging.getLogger('basicLogger')
 
-def publish_event_logger():
-    content = {
-        "trace_id": f"{str(uuid.uuid4())}",
-        "code_id": "0001",
-        "timestamp": f"{datetime.now()}",
-    }
-    msg = {
-        "type": "logging msg from storage service",
-        "datetime": datetime.now().strftime( "%Y-%m-%dT%H:%M:%S"),
-        "msg_text": "Code 0002. Successfully start and connect to Kafka. Ready to consume messages"
-        "payload": content
-    }
-    msg_str = json.dumps(msg)
-    log_producer.produce(str.encode(msg_str))
+DB_ENGINE = create_engine(f"sqlite:///{app_config['datastore']['filename']}")
+Base.metadata.create_all(DB_ENGINE)
+
+DB_SESSION = sessionmaker(bind=DB_ENGINE)
 
 def add_event_stats(body):
-    """ Receives a switch report """
+    """ Receives event and record in database """
     session = DB_SESSION()
-    report = SwitchReport( trace_id=body['trace_id'],
-        report_id=body['report_id'], 
-        switch_id=body['switch_id'],
-        timestamp=body['timestamp'],
-        status=body['status'],
-        temperature=body['temperature'])
+    event_record = EventStats( trace_id=body['trace_id'],
+        message_code=body['code'], 
+        message=body['msg_text'],
+        last_updated=body['timestamp'])
 
-    session.add(report)
+    session.add(event_record)
     session.commit()
     session.close()
 
-    logger.debug(f"stored event add report {body['trace_id']}")
+    logger.debug(f"stored event add record {body['trace_id']} code {body['code']}")
     return NoContent, 201
 
-def get_config_file_reading(start_timestamp, end_timestamp):
-    #if result is returned, return 200, else return 404
+
+def get_event_stats():
     session = DB_SESSION()
 
-    start_timestamp_datetime = datetime.datetime.strptime(start_timestamp, "%Y-%m-%d %H:%M:%S.%f")
-    end_timestamp_datetime = datetime.datetime.strptime(end_timestamp, "%Y-%m-%d %H:%M:%S.%f")
+    results = session.query(EventStats.message_code, func.count(EventStats.trace_id).group_by(EventStats.message_code)).all
 
-    results = session.query(ConfigurationFile).filter(
-        and_(ConfigurationFile.date_created >= start_timestamp_datetime,
-        ConfigurationFile.date_created < end_timestamp_datetime)
-    )
-    results_list = [reading.to_dict() for reading in results]
+    print(results)
 
-    #add debug msg
-    logger.info("Query for Config file reading after %s return %d results" %(start_timestamp, len(results_list)))   
-    return results_list, 200
+    return results, 200
 
 
 def process_messages():
@@ -121,15 +102,12 @@ def process_messages():
 
                 payload = msg['payload']
 
-                if msg['type'] == 'switch_report':
-                    add_switch_report(payload)
+                if msg['code'] in ["0001", "0002", "0003", "0004"]:
+                    add_event_stats(payload)
                     #add log if success or fail
-                    logger.info(f"Added switch report with id {payload['report_id']}")
-                elif msg['type'] == 'configuration_file':
-                    add_config_file(payload)
-                    logger.info(f"Added configuration file with id {payload['file_id']}")
+                    logger.info(f"Added event with id {payload['trace_id']} message code {payload['code']}")
                 else:
-                    logger.error("Unknown event type: %s" % msg['type'])
+                    logger.error("Unknown event msg code: %s" % msg['code'])
                 #commit the new message as being read
                 consumer.commit_offsets()
             #break the while loop if things work
@@ -150,3 +128,8 @@ app.add_middleware( CORSMiddleware,
                    allow_methods=["*"], 
                    allow_headers=["*"], )
 
+if __name__ == "__main__":
+    tl = Thread(target=process_messages, args=())
+    tl.setDaemon(True)
+    tl.start()
+    app.run(host='0.0.0.0',port=8120)

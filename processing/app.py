@@ -161,13 +161,14 @@ def populate_stats():
         #publish if over threshold
         if len(report_info) >= THRESHOLD or len(cfile_info) >= THRESHOLD:
             content = {
+                "code": "0004",
                 "trace_id": f"{str(uuid.uuid4())}",
-                "timestamp": f"{datetime.now()}"
+                "timestamp": f"{datetime.now()}",
+                "msg_text": "Code 0004. Number of events over threshold"
             }
             msg = {
                 "code": "0004"
                 "datetime": datetime.now().strftime( "%Y-%m-%dT%H:%M:%S"),
-                "msg_text": "Code 0004. Number of events over threshold"
                 "payload": content
             }
             msg_str = json.dumps(msg)
