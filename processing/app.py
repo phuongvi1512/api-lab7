@@ -63,7 +63,6 @@ while retry_count < MAX_RETRY_COUNT:
         #ready to consume messages from events topic
         log_topic = client.topics[str.encode(app_config['events']['log_topic'])]
         log_producer = log_topic.get_sync_producer()
-        client = KafkaClient(hosts=hostname)
         content = {
                 "code": "0003",
                 "trace_id": f"{str(uuid.uuid4())}",

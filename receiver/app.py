@@ -99,7 +99,6 @@ def add_switch_report(body):
     msg = {
         "type": "switch_report",
         'datetime': f"{datetime.now().strftime('%Y-%m-%dT%H:%M:%S')}",
-        #"datetime": f"{datetime.now().strftime( "%Y-%m-%dT%H:%M:%S")}",
         "payload": content
     }
     msg_str = json.dumps(msg)
