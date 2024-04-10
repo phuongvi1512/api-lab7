@@ -63,7 +63,7 @@ services:
     volumes:
       - /home/azureuser/config/event_logger:/config
       - /home/azureuser/logs/:/logs
-      - logging-db:/db
+      - logging-db:/data
     ports:
       - "8120:8120"
     hostname: event_logger
