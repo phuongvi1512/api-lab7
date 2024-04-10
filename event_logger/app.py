@@ -70,6 +70,10 @@ def add_event_stats(body):
 
 
 def get_events_stats():
+    DB_ENGINE = create_engine(f"sqlite:///{app_config['datastore']['filename']}")
+    Base.metadata.create_all(DB_ENGINE)
+
+    DB_SESSION = sessionmaker(bind=DB_ENGINE)
     session = DB_SESSION()
 
     results = session.query(EventStats.message_code, func.count(EventStats.trace_id).group_by(EventStats.message_code)).all
