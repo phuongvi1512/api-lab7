@@ -80,6 +80,33 @@ def get_stats():
 
 def populate_stats():
     """ Periodically update stats based on the data from the Data Storage """
+    logger.info("try to connect to logger kafka")
+    retry_count = 0
+    #connect to Kafka and log if app successfully start
+    while retry_count < MAX_RETRY_COUNT:
+        #logging when trying to connect to Kafka
+    l   logger.info(f"Trying to connect to Kafka {retry_count + 1}th time")
+        try:
+            client = KafkaClient(hosts=hostname)
+            #publish msg to event_log if successfully start and connect to Kafka
+            #ready to consume messages from events topic
+            log_topic = client.topics[str.encode(app_config['events']['log_topic'])]
+            log_producer = log_topic.get_sync_producer()
+            content = {
+                    "trace_id": f"{str(uuid.uuid4())}",
+                    "timestamp": f"{datetime.now()}"
+                }
+            msg = {
+                "code": "0003"
+                "datetime": datetime.now().strftime( "%Y-%m-%dT%H:%M:%S"),
+                "msg_text": "Code 0003. App successfully started"
+                "payload": content
+            }
+            msg_str = json.dumps(msg)
+            log_producer.produce(str.encode(msg_str))
+        except Exception as e:
+            logger.info("Failed to connect to kafka. Error is %d" % e)
+
     #starting log msg
     logger.info(f"periodically updating stats at {datetime.now()}")
 
@@ -133,32 +160,19 @@ def populate_stats():
 
         #publish if over threshold
         if len(report_info) >= THRESHOLD or len(cfile_info) >= THRESHOLD:
-            retry_count = 0
-            hostname = "%s:%d"%(app_config['events']['hostname'],
-                                app_config['events']['port'])
-            while retry_count < MAX_RETRY_COUNT:
-                #logging when trying to connect to Kafka
-                logger.info(f"Trying to connect to Kafka {retry_count + 1}th time")
-                try:
-                    client = KafkaClient(hosts=hostname)
-                    #publish msg to event_log if successfully start and connect to Kafka
-                    #ready to consume messages from events topic
-                    log_topic = client.topics[str.encode(app_config['events']['log_topic'])]
-                    log_producer = log_topic.get_sync_producer()
-                    content = {
-                            "trace_id": f"{str(uuid.uuid4())}",
-                            "timestamp": f"{datetime.now()}"
-                        }
-                    msg = {
-                        "code": "0004"
-                        "datetime": datetime.now().strftime( "%Y-%m-%dT%H:%M:%S"),
-                        "msg_text": "Code 0004. Number of events over threshold"
-                        "payload": content
-                    }
-                    msg_str = json.dumps(msg)
-                    log_producer.produce(str.encode(msg_str))
-                except Exception as e:
-                    logger.info("Failed to connect to kafka. Error is %d" % e)
+            content = {
+                "trace_id": f"{str(uuid.uuid4())}",
+                "timestamp": f"{datetime.now()}"
+            }
+            msg = {
+                "code": "0004"
+                "datetime": datetime.now().strftime( "%Y-%m-%dT%H:%M:%S"),
+                "msg_text": "Code 0004. Number of events over threshold"
+                "payload": content
+            }
+            msg_str = json.dumps(msg)
+            log_producer.produce(str.encode(msg_str))
+ 
         #log msg number of events received
         logger.info(f"received {len(report_info)} reports and {len(cfile_info)} cfiles at {datetime.now()}")
 
