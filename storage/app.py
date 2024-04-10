@@ -64,14 +64,14 @@ DB_SESSION = sessionmaker(bind=DB_ENGINE)
 
 def publish_event_logger():
     content = {
+        "code": "0002",
         "trace_id": f"{str(uuid.uuid4())}",
-        "code_id": "0001",
         "timestamp": f"{datetime.now()}",
+        "msg_text": "Code 0002. Successfully start and connect to Kafka. Ready to consume messages"
     }
     msg = {
-        "type": "logging msg from storage service",
-        "datetime": datetime.now().strftime( "%Y-%m-%dT%H:%M:%S"),
-        "msg_text": "Code 0002. Successfully start and connect to Kafka. Ready to consume messages"
+        "code": "0002",
+        "datetime": datetime.now().strftime( "%Y-%m-%dT%H:%M:%S"), 
         "payload": content
     }
     msg_str = json.dumps(msg)
@@ -160,7 +160,6 @@ def process_messages():
         try:
             client = KafkaClient(hosts=hostname)
             topic = client.topics[str.encode(app_config['events']['topic'])]
-
             #publish msg to event_log if successfully start and connect to Kafka
             #ready to consume messages from events topic
             log_topic = client.topics[str.encode(app_config['events']['log_topic'])]
