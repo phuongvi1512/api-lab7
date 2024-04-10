@@ -144,7 +144,7 @@ def process_messages():
         logger.info(f"Trying to connect to Kafka {retry_count + 1}th time")
         try:
             client = KafkaClient(hosts=hostname)
-         
+            topic = client.topics[str.encode(app_config['events']['topic'])]
             #publish msg to event_log if successfully start and connect to Kafka
             #ready to consume messages from events topic
             log_topic = client.topics[str.encode(app_config['events']['log_topic'])]
