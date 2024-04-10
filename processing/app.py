@@ -91,8 +91,10 @@ def populate_stats():
             log_topic = client.topics[str.encode(app_config['events']['log_topic'])]
             log_producer = log_topic.get_sync_producer()
             content = {
+                    "code": "0003",
                     "trace_id": f"{str(uuid.uuid4())}",
-                    "timestamp": f"{datetime.now()}"
+                    "timestamp": f"{datetime.now()}",
+                    "msg_text": "Code 0003. App successfully started"
                 }
             msg = {
                 "code": "0003",
@@ -170,7 +172,6 @@ def populate_stats():
             msg = {
                 "code": "0004",
                 "datetime": datetime.now().strftime('%Y-%m-%dT%H:%M:%S'),
-                #"datetime": f"{datetime.now().strftime('%Y-%m-%dT%H:%M:%S')}",
                 "payload": content
             }
             msg_str = json.dumps(msg)

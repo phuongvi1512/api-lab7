@@ -45,21 +45,6 @@ with open('log_conf.yml', 'r') as f:
     logging.config.dictConfig(log_config)
 
 logger = logging.getLogger('basicLogger')
-def publish_event_logger():
-    content = {
-        "code": "0001",
-        "trace_id": f"{str(uuid.uuid4())}",
-        "timestamp": f"{datetime.now()}",
-        "msg_text": "Code 0001. Successfully start and connect to Kafka. Ready to receive message"
-
-    }
-    msg = {
-        "code": "0001",
-        "datetime": datetime.now().strftime('%Y-%m-%dT%H:%M:%S'),
-        "payload": content
-    }
-    msg_str = json.dumps(msg)
-    log_producer.produce(str.encode(msg_str))
 
 #connect to Kafka broker
 retry_count = 0
@@ -134,7 +119,6 @@ def add_config_file(body):
     msg = {
         "type": "configuration_file",
         "datetime": datetime.now().strftime('%Y-%m-%dT%H:%M:%S'),
-       # "datetime": f"{datetime.now().strftime( "%Y-%m-%dT%H:%M:%S")}",
         "payload": content
     }
     msg_str = json.dumps(msg)
