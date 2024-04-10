@@ -5,7 +5,7 @@ def create_db():
     c = conn.cursor()
 
     #create table event_stats_file
-    c.execute('''CREATE TABLE event_stats_file
+    c.execute('''CREATE TABLE event_stats
                  (id INTEGER PRIMARY KEY AUTOINCREMENT, 
                 trace_id VARCHAR(250) NOT NULL, 
                 message_code VARCHAR(250) NOT NULL,
