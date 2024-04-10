@@ -1,4 +1,4 @@
-import os
+import os, time
 from datetime import datetime
 import requests
 import logging
@@ -107,8 +107,11 @@ def populate_stats():
             }
             msg_str = json.dumps(msg)
             log_producer.produce(str.encode(msg_str))
+            break
         except Exception as e:
             logger.info(f"Failed to connect to kafka. Error is {e}")
+            retry_count += 1
+            time.sleep(10)
 
     #starting log msg
     logger.info(f"periodically updating stats at {datetime.now()}")
