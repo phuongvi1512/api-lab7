@@ -87,17 +87,45 @@ const updateStatsHTML = (data, error = false) => {
     })
 }
 
+//for log
+// This function fetches and updates the general statistics
+const getLogStats = (statsUrl) => {
+    fetch(statsUrl)
+        .then(res => res.json())
+        .then((result) => {
+            console.log("Received stats", result)
+            updateStatsHTML(result);
+        }).catch((error) => {
+            updateLogStatsHTML(error.message, error = true)
+            console.log("ERROR!!!!")
+        })
+}
+
+const updateLogStatsHTML = (data, error = false) => {
+    const elem = document.getElementById("log-stats")
+    if (error === true) {
+        elem.innerHTML = `<code>${data}</code>`
+        return
+    }
+    elem.innerHTML = ""
+    Object.entries(data).map(([key, value]) => {
+        const pElm = document.createElement("p")
+        pElm.innerHTML = `<strong>${key}:</strong> ${value}`
+        elem.appendChild(pElm)
+    })
+}
+
 const setup = () => {
     const interval = setInterval(() => {
         getStats(STATS_API_URL)
-        getStats(CODE_LOG_URL)
+        getLogStats(CODE_LOG_URL)
         getEvent("switch_report")
         getEvent("configuration_file")
     }, 5000); // Update every 5 seconds
 
     // initial call
     getStats(STATS_API_URL)
-    getStats(CODE_LOG_URL)
+    getLogStats(CODE_LOG_URL)
     getEvent("switch_report") 
     getEvent("configuration_file")
     // clearInterval(interval);
