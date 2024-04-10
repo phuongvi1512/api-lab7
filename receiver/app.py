@@ -47,13 +47,15 @@ with open('log_conf.yml', 'r') as f:
 logger = logging.getLogger('basicLogger')
 def publish_event_logger():
     content = {
+        "code": "0001",
         "trace_id": f"{str(uuid.uuid4())}",
         "timestamp": f"{datetime.now()}",
+        "msg_text": "Code 0001. Successfully start and connect to Kafka. Ready to receive message"
+
     }
     msg = {
         "code": "0001",
         "datetime": datetime.now().strftime('%Y-%m-%dT%H:%M:%S'),
-        "msg_text": "Code 0001. Successfully start and connect to Kafka. Ready to receive message",
         "payload": content
     }
     msg_str = json.dumps(msg)
