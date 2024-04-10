@@ -93,7 +93,7 @@ const getLogStats = (statsUrl) => {
     fetch(statsUrl)
         .then(res => res.json())
         .then((result) => {
-            console.log("Received stats", result)
+            console.log("Received Log stats", result)
             updateLogStatsHTML(result);
         }).catch((error) => {
             updateLogStatsHTML(error.message, error = true)
