@@ -49,7 +49,7 @@ logger = logging.getLogger('basicLogger')
 with open('app_conf.yml', 'r') as f:
     app_config = yaml.safe_load(f.read())
 
-THRESHOLD = app_config['eventstore']['default_threshold']
+THRESHOLD = app_config['events']['default_threshold']
 MAX_RETRY_COUNT = app_config['retry']['max_count']
 SLEEP_TIME = app_config['retry']['sleep_time']
 
