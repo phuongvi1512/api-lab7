@@ -43,13 +43,43 @@ logger.info("Log Conf file: %s" % log_conf_file)
 
 with open('app_conf.yml', 'r') as f: 
     app_config = yaml.safe_load(f.read())  
-    hostname = app_config['events']['hostname']
-    port = app_config['events']['port']
 
+hostname = app_config['events']['hostname']
+port = app_config['events']['port']
 THRESHOLD = app_config['events']['default_threshold']
 MAX_RETRY_COUNT = app_config['retry']['max_count']
 SLEEP_TIME = app_config['retry']['sleep_time']
 
+logger.info("try to connect to logger kafka")
+retry_count = 0
+#connect to Kafka and log if app successfully start
+while retry_count < MAX_RETRY_COUNT:
+    #logging when trying to connect to Kafka
+    logger.info(f"Trying to connect to Kafka {retry_count + 1}th time")
+    try:
+        client = KafkaClient(hosts=hostname)
+        #publish msg to event_log if successfully start and connect to Kafka
+        #ready to consume messages from events topic
+        log_topic = client.topics[str.encode(app_config['events']['log_topic'])]
+        log_producer = log_topic.get_sync_producer()
+        content = {
+                "code": "0003",
+                "trace_id": f"{str(uuid.uuid4())}",
+                "timestamp": f"{datetime.now()}",
+                "msg_text": "Code 0003. App successfully started"
+            }
+        msg = {
+            "code": "0003",
+            "datetime": datetime.now().strftime('%Y-%m-%dT%H:%M:%S'),
+            "payload": content
+        }
+        msg_str = json.dumps(msg)
+        log_producer.produce(str.encode(msg_str))
+        break
+    except Exception as e:
+        logger.info(f"Failed to connect to kafka. Error is {e}")
+        retry_count += 1
+        time.sleep(10)
 
 DB_ENGINE = create_engine(f"sqlite:///{app_config['datastore']['filename']}")
 Base.metadata.create_all(DB_ENGINE)
@@ -78,37 +108,7 @@ def get_stats():
 
 def populate_stats():
     """ Periodically update stats based on the data from the Data Storage """
-    logger.info("try to connect to logger kafka")
-    retry_count = 0
-    #connect to Kafka and log if app successfully start
-    while retry_count < MAX_RETRY_COUNT:
-        #logging when trying to connect to Kafka
-        logger.info(f"Trying to connect to Kafka {retry_count + 1}th time")
-        try:
-            client = KafkaClient(hosts=hostname)
-            #publish msg to event_log if successfully start and connect to Kafka
-            #ready to consume messages from events topic
-            log_topic = client.topics[str.encode(app_config['events']['log_topic'])]
-            log_producer = log_topic.get_sync_producer()
-            content = {
-                    "code": "0003",
-                    "trace_id": f"{str(uuid.uuid4())}",
-                    "timestamp": f"{datetime.now()}",
-                    "msg_text": "Code 0003. App successfully started"
-                }
-            msg = {
-                "code": "0003",
-                "datetime": datetime.now().strftime('%Y-%m-%dT%H:%M:%S'),
-                "msg_text": "Code 0003. App successfully started",
-                "payload": content
-            }
-            msg_str = json.dumps(msg)
-            log_producer.produce(str.encode(msg_str))
-            break
-        except Exception as e:
-            logger.info(f"Failed to connect to kafka. Error is {e}")
-            retry_count += 1
-            time.sleep(10)
+
 
     #starting log msg
     logger.info(f"periodically updating stats at {datetime.now()}")
