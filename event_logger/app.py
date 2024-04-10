@@ -76,11 +76,16 @@ def get_events_stats():
     DB_SESSION = sessionmaker(bind=DB_ENGINE)
     session = DB_SESSION()
 
-    results = session.query(EventStats.message_code, func.count(EventStats.trace_id).group_by(EventStats.message_code)).all
+    results = session.query(EventStats.message_code, 
+                     func.count(EventStats.trace_id)
+                     ).group_by(EventStats.message_code).all()
 
     print(results)
 
-    return results, 200
+    stats = {code: count for code, count in results}
+
+    session.close()
+    return stats, 200
 
 
 def process_messages():

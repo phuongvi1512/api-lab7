@@ -62,22 +62,6 @@ Base.metadata.bind = DB_ENGINE
 
 DB_SESSION = sessionmaker(bind=DB_ENGINE)
 
-def publish_event_logger():
-    content = {
-        "code": "0002",
-        "trace_id": f"{str(uuid.uuid4())}",
-        "timestamp": f"{datetime.datetime.now()}",
-        "msg_text": "Code 0002. Successfully start and connect to Kafka. Ready to consume messages"
-    }
-    msg = {
-        "code": "0002",
-        "datetime": datetime.datetime.now().strftime('%Y-%m-%dT%H:%M:%S'),
-       # "datetime": f"{datetime.datetime.now().strftime('%Y-%m-%dT%H:%M:%S')}", 
-        "payload": content
-    }
-    msg_str = json.dumps(msg)
-    log_producer.produce(str.encode(msg_str))
-
 def add_switch_report(body):
     """ Receives a switch report """
     session = DB_SESSION()
@@ -166,6 +150,19 @@ def process_messages():
             log_topic = client.topics[str.encode(app_config['events']['log_topic'])]
             log_producer = log_topic.get_sync_producer()
             publish_event_logger()
+            content = {
+                "code": "0002",
+                "trace_id": f"{str(uuid.uuid4())}",
+                "timestamp": f"{datetime.datetime.now()}",
+                "msg_text": "Code 0002. Successfully start and connect to Kafka. Ready to consume messages"
+            }
+            msg = {
+                "code": "0002",
+                "datetime": datetime.datetime.now().strftime('%Y-%m-%dT%H:%M:%S'),
+                "payload": content
+            }
+            msg_str = json.dumps(msg)
+            log_producer.produce(str.encode(msg_str))
 
             #create a consumer on a consumer group that only reads new messages
             # (uncommitted messages) when the service restarts (i.e, it doesn't

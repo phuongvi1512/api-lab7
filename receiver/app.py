@@ -78,7 +78,20 @@ while retry_count < MAX_RETRY_COUNT:
         log_topic = client.topics[str.encode(app_config['events']['log_topic'])]
         log_producer = log_topic.get_sync_producer()
 
-        publish_event_logger()
+        content = {
+            "code": "0001",
+            "trace_id": f"{str(uuid.uuid4())}",
+            "timestamp": f"{datetime.now()}",
+            "msg_text": "Code 0001. Successfully start and connect to Kafka. Ready to receive message"
+
+        }
+        msg = {
+            "code": "0001",
+            "datetime": datetime.now().strftime('%Y-%m-%dT%H:%M:%S'),
+            "payload": content
+        }
+        msg_str = json.dumps(msg)
+        log_producer.produce(str.encode(msg_str))
         break
     except Exception as e:
         logger.error(f"Connection failed the {retry_count + 1}th time, error is {e}")
