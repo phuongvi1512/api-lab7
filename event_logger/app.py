@@ -69,7 +69,7 @@ def add_event_stats(body):
     return NoContent, 201
 
 
-def get_event_stats():
+def get_events_stats():
     session = DB_SESSION()
 
     results = session.query(EventStats.message_code, func.count(EventStats.trace_id).group_by(EventStats.message_code)).all
