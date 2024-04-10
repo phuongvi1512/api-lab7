@@ -85,7 +85,7 @@ def populate_stats():
     #connect to Kafka and log if app successfully start
     while retry_count < MAX_RETRY_COUNT:
         #logging when trying to connect to Kafka
-    l   logger.info(f"Trying to connect to Kafka {retry_count + 1}th time")
+        logger.info(f"Trying to connect to Kafka {retry_count + 1}th time")
         try:
             client = KafkaClient(hosts=hostname)
             #publish msg to event_log if successfully start and connect to Kafka
