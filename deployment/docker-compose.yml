@@ -130,3 +130,4 @@ services:
 volumes:
   my-db:
   processing-db:
+  logging-db:
