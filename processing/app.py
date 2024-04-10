@@ -41,19 +41,15 @@ logger = logging.getLogger('basicLogger')
 logger.info("App Conf file: %s" % app_conf_file)
 logger.info("Log Conf file: %s" % log_conf_file)
 
-#read from log_conf.yml
-with open('log_conf.yml', 'r') as f:
-    log_config = yaml.safe_load(f.read())
-    logging.config.dictConfig(log_config)
-logger = logging.getLogger('basicLogger')
-
-#read from app_conf.yaml
-with open('app_conf.yml', 'r') as f:
-    app_config = yaml.safe_load(f.read())
+with open('app_conf.yml', 'r') as f: 
+    app_config = yaml.safe_load(f.read())  
+    hostname = app_config['events']['hostname']
+    port = app_config['events']['port']
 
 THRESHOLD = app_config['events']['default_threshold']
 MAX_RETRY_COUNT = app_config['retry']['max_count']
 SLEEP_TIME = app_config['retry']['sleep_time']
+
 
 DB_ENGINE = create_engine(f"sqlite:///{app_config['datastore']['filename']}")
 Base.metadata.create_all(DB_ENGINE)
