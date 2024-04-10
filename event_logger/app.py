@@ -134,7 +134,7 @@ app.add_middleware( CORSMiddleware,
                    allow_headers=["*"], )
 
 if __name__ == "__main__":
-    if not os.path.exists("/data/stats.sqlite"):
+    if not os.path.exists("/data/event_stats.sqlite"):
         create_db()
     tl = Thread(target=process_messages, args=())
     tl.setDaemon(True)
