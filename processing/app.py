@@ -1,4 +1,4 @@
-import os, time
+import os, time, uuid
 from datetime import datetime
 import requests
 import logging
@@ -58,10 +58,12 @@ while retry_count < MAX_RETRY_COUNT:
     logger.info(f"Trying to connect to Kafka {retry_count + 1}th time")
     try:
         client = KafkaClient(hosts=hostname)
+        
         #publish msg to event_log if successfully start and connect to Kafka
         #ready to consume messages from events topic
         log_topic = client.topics[str.encode(app_config['events']['log_topic'])]
         log_producer = log_topic.get_sync_producer()
+        client = KafkaClient(hosts=hostname)
         content = {
                 "code": "0003",
                 "trace_id": f"{str(uuid.uuid4())}",
@@ -79,7 +81,7 @@ while retry_count < MAX_RETRY_COUNT:
     except Exception as e:
         logger.info(f"Failed to connect to kafka. Error is {e}")
         retry_count += 1
-        time.sleep(10)
+        time.sleep(SLEEP_TIME)
 
 DB_ENGINE = create_engine(f"sqlite:///{app_config['datastore']['filename']}")
 Base.metadata.create_all(DB_ENGINE)
