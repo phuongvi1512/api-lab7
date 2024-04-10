@@ -6,6 +6,8 @@ const EVENTS_URL = {
     configuration_file: "http://pdang-api.eastus.cloudapp.azure.com:8110/configuration_file" 
 }
 
+const CODE_LOG_URL = "http://pdang-api.eastus.cloudapp.azure.com:8120/events_stats"
+
 // This function fetches and updates the general statistics
 const getStats = (statsUrl) => {
     fetch(statsUrl)
@@ -88,13 +90,14 @@ const updateStatsHTML = (data, error = false) => {
 const setup = () => {
     const interval = setInterval(() => {
         getStats(STATS_API_URL)
+        getStats(CODE_LOG_URL)
         getEvent("switch_report")
         getEvent("configuration_file")
     }, 5000); // Update every 5 seconds
 
     // initial call
     getStats(STATS_API_URL)
-    getEvent("switch_report") //wrong, need more edit
+    getEvent("switch_report") 
     getEvent("configuration_file")
     // clearInterval(interval);
 }
