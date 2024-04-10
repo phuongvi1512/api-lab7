@@ -39,7 +39,7 @@ services:
       - /home/azureuser/logs/:/logs
       - processing-db:/data
     hostname: processing
-    #network_mode: host
+    network_mode: host
     depends_on:
       - "db"
 

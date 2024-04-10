@@ -57,7 +57,7 @@ while retry_count < MAX_RETRY_COUNT:
     #logging when trying to connect to Kafka
     logger.info(f"Trying to connect to Kafka {retry_count + 1}th time")
     try:
-        client = KafkaClient(hosts=hostname)
+        client = KafkaClient()
         
         #publish msg to event_log if successfully start and connect to Kafka
         #ready to consume messages from events topic
