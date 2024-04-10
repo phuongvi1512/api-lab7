@@ -24,7 +24,7 @@ else:
     print("In Dev Environment")
     app_conf_file = "app_conf.yml"
     log_conf_file = "log_conf.yml"
-    
+
 #read from app_conf.yaml
 with open('app_conf.yml', 'r') as f:
     app_config = yaml.safe_load(f.read())
@@ -48,13 +48,14 @@ with open('log_conf.yml', 'r') as f:
     logging.config.dictConfig(log_config)
 logger = logging.getLogger('basicLogger')
 
-DB_ENGINE = create_engine(f"sqlite:///{app_config['datastore']['filename']}")
-Base.metadata.create_all(DB_ENGINE)
 
-DB_SESSION = sessionmaker(bind=DB_ENGINE)
 
 def add_event_stats(body):
     """ Receives event and record in database """
+    DB_ENGINE = create_engine(f"sqlite:///{app_config['datastore']['filename']}")
+    Base.metadata.create_all(DB_ENGINE)
+
+    DB_SESSION = sessionmaker(bind=DB_ENGINE)
     session = DB_SESSION()
     event_record = EventStats( trace_id=body['trace_id'],
         message_code=body['code'], 
