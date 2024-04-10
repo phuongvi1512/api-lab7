@@ -94,7 +94,7 @@ const getLogStats = (statsUrl) => {
         .then(res => res.json())
         .then((result) => {
             console.log("Received stats", result)
-            updateStatsHTML(result);
+            updateLogStatsHTML(result);
         }).catch((error) => {
             updateLogStatsHTML(error.message, error = true)
             console.log("ERROR!!!!")
