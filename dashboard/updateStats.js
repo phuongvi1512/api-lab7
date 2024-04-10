@@ -97,6 +97,7 @@ const setup = () => {
 
     // initial call
     getStats(STATS_API_URL)
+    getStats(CODE_LOG_URL)
     getEvent("switch_report") 
     getEvent("configuration_file")
     // clearInterval(interval);
