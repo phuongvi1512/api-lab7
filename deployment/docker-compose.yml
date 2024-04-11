@@ -86,7 +86,7 @@ services:
   nginx:
     image: nginx:latest
     volumes:
-      - /azureuser/nginx/:/etc/nginx/:ro
+      - /azureuser/nginx/nginx.conf:/etc/nginx/:ro
     depends_on:
       - "receiver"
       - "storage"
