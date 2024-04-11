@@ -6,7 +6,7 @@ const EVENTS_URL = {
     configuration_file: "http://pdang-api.eastus.cloudapp.azure.com/audit_log/configuration_file" 
 }
 
-const CODE_LOG_URL = "http://pdang-api.eastus.cloudapp.azure.com/events_stats"
+const CODE_LOG_URL = "http://pdang-api.eastus.cloudapp.azure.com/event_logger/events_stats"
 
 // This function fetches and updates the general statistics
 const getStats = (statsUrl) => {
