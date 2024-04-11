@@ -1,71 +1,72 @@
 services:
   receiver:
     build: ../receiver
-    environment:
-      - TARGET_ENV=test
     ports:
-      - "8080:8080"
+      - "8080"
     hostname: receiver
     volumes:
       - /home/azureuser/config/receiver:/config
       - /home/azureuser/logs/:/logs
+    networks:
+      - "api.network"
     depends_on:
       - "storage"
       - "kafka"
 
   storage:
     build: ../storage
-    environment:
-      - TARGET_ENV=test
     ports:
-      - "8090:8090"
+      - "8090"
     hostname: storage
     volumes:
       - /home/azureuser/config/storage:/config
       - /home/azureuser/logs/:/logs
     expose:
       - '8090'
+    networks:
+      - "api.network"
     depends_on:
       - "db"
       - "kafka"
       - "zookeeper"
 
   processing:
-    build: ../processing
-    environment:
-      - TARGET_ENV=test    
+    build: ../processing 
     volumes:
       - /home/azureuser/config/processing:/config
       - /home/azureuser/logs/:/logs
       - processing-db:/data
     hostname: processing
-    network_mode: host
+    ports:
+      - "8100"
+    networks:
+      - "api.network"
     depends_on:
       - "db"
 
   audit_log:
     build: ../audit_log
-    environment:
-      - TARGET_ENV=test
     volumes:
       - /home/azureuser/config/audit_log:/config
       - /home/azureuser/logs/:/logs
     ports:
-      - "8110:8110"
+      - "8110"
+    networks:
+      - "api.network"
     hostname: audit_log
     depends_on:
       - "processing"
 
   event_logger:
     build: ../event_logger
-    environment:
-      - TARGET_ENV=test
     volumes:
       - /home/azureuser/config/event_logger:/config
       - /home/azureuser/logs/:/logs
       - logging-db:/data
     ports:
-      - "8120:8120"
+      - "8120"
+    networks:
+      - "api.network"
     hostname: event_logger
     depends_on:
       - "processing"
@@ -73,12 +74,29 @@ services:
       - "storage"
 
   dashboard:
-    build: ../dashboard
+    build: ../dashboard-ui
     ports:
-      - "8888:80"
+      - "3000"
+    networks:
+      - "api.network"
     depends_on:
       - "processing"
       - "audit_log"
+
+  nginx:
+    image: nginx:latest
+    volumes:
+      -/azureuser/nginx/nginx.conf:/etc/nginx/nginx.conf:ro
+    depends_on:
+      - "receiver"
+      - "storage"
+      - "processing"
+      - "audit_log"
+      - "dashboard"
+    ports:
+      - "80:80"
+    networks:
+      - "api.network"
 
   zookeeper:
     image: wurstmeister/zookeeper
@@ -87,6 +105,8 @@ services:
     volumes:
       - /home/azureuser/zookeeper/data:/opt/zookeeper-3.4.13/data
     hostname: zookeeper
+    networks:
+      - "api.network"
 
   kafka:
     image: wurstmeister/kafka
@@ -106,6 +126,8 @@ services:
       KAFKA_ZOOKEEPER_CONNECT: zookeeper:2181
       KAFKA_LOG_DIRS: /kafka/kafka-logs
       KAFKA_BROKER_ID: 1
+    networks:
+      - "api.network"
     volumes:
       - /var/run/docker.sock:/var/run/docker.sock
       - /home/azureuser/kafka:/kafka/kafka-logs
@@ -121,9 +143,9 @@ services:
       MYSQL_PASSWORD: 'password'
       MYSQL_ROOT_PASSWORD: 'password'
     ports:
-      - '3306:3306'
-    expose:
       - '3306'
+    networks:
+      - "api.network"
     volumes:
       - my-db:/var/lib/mysql
 
@@ -131,3 +153,6 @@ volumes:
   my-db:
   processing-db:
   logging-db:
+
+networks:
+  api.network:
