@@ -236,7 +236,7 @@ app.add_api("openapi.yaml", base_path="/processing", strict_validation=True, val
 
 if "TARGET_ENV" not in os.environ or os.environ["TARGET_ENV"] != "test":
     CORS(app.app)
-    app.app.config['CORS_HEEADERS'] = 'Content-Type'
+    app.app.config['CORS_HEADERS'] = 'Content-Type'
 
 if __name__ == "__main__":
     if not os.path.exists("/data/stats.sqlite"):
