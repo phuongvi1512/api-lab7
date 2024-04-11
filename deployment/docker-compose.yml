@@ -21,8 +21,6 @@ services:
     volumes:
       - /home/azureuser/config/storage:/config
       - /home/azureuser/logs/:/logs
-    expose:
-      - '8090'
     networks:
       - "api.network"
     depends_on:
