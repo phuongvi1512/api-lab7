@@ -14,6 +14,7 @@ from connexion.middleware import MiddlewarePosition
 from pykafka import KafkaClient
 from pykafka.common import OffsetType
 from starlette.middleware.cors import CORSMiddleware
+from flask_cors import CORS
 from base import Base
 from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
@@ -226,12 +227,16 @@ def init_scheduler():
 
 app = connexion.FlaskApp(__name__, specification_dir='')
 app.add_api("openapi.yaml", base_path="/processing", strict_validation=True, validate_responses=True)
-app.add_middleware( CORSMiddleware, 
-                   position=MiddlewarePosition.BEFORE_EXCEPTION, 
-                   allow_origins=["*"], 
-                   allow_credentials=True, 
-                   allow_methods=["*"], 
-                   allow_headers=["*"], )
+# app.add_middleware( CORSMiddleware, 
+#                    position=MiddlewarePosition.BEFORE_EXCEPTION, 
+#                    allow_origins=["*"], 
+#                    allow_credentials=True, 
+#                    allow_methods=["*"], 
+#                    allow_headers=["*"], )
+
+if "TARGET_ENV" not in os.environ or os.environ["TARGET_ENV"] != "test":
+    CORS(app.app)
+    app.app.config['CORS_HEEADERS'] = 'Content-Type'
 
 if __name__ == "__main__":
     if not os.path.exists("/data/stats.sqlite"):

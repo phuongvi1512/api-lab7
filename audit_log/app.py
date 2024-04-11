@@ -3,6 +3,7 @@ import logging.config
 import swagger_ui_bundle
 import yaml
 from threading import Thread
+from flask_cors import CORS
 import connexion
 from connexion import NoContent
 from connexion.middleware import MiddlewarePosition
@@ -86,12 +87,16 @@ def get_switch_report(index):
 
 app = connexion.FlaskApp(__name__, specification_dir='')
 app.add_api("openapi.yaml", base_path="/audit_log",strict_validation=True, validate_responses=True)
-app.add_middleware( CORSMiddleware, 
-                   position=MiddlewarePosition.BEFORE_EXCEPTION, 
-                   allow_origins=["*"], 
-                   allow_credentials=True, 
-                   allow_methods=["*"], 
-                   allow_headers=["*"], )
+# app.add_middleware( CORSMiddleware, 
+#                    position=MiddlewarePosition.BEFORE_EXCEPTION, 
+#                    allow_origins=["*"], 
+#                    allow_credentials=True, 
+#                    allow_methods=["*"], 
+#                    allow_headers=["*"], )
+
+if "TARGET_ENV" not in os.environ or os.environ["TARGET_ENV"] != "test":
+    CORS(app.app)
+    app.app.config['CORS_HEEADERS'] = 'Content-Type'
 
 if __name__ == "__main__":
     tl = Thread(target=get_config_file)
