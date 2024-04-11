@@ -74,7 +74,7 @@ services:
       - "storage"
 
   dashboard:
-    build: ../dashboard-ui
+    build: ../dashboard
     ports:
       - "3000"
     networks:
