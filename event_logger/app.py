@@ -2,6 +2,7 @@ import datetime, json, os
 import logging.config
 from time import sleep
 import yaml
+from flask_cors import CORS
 import connexion
 from connexion import NoContent
 from connexion.middleware import MiddlewarePosition
@@ -16,14 +17,14 @@ from base import Base
 from create_db import create_db
 from event_stats import EventStats
 
-if "TARGER_ENV" in os.environ and os.environ["TARGET_ENV"] == "test":
-    print("In Test Environment")
-    app_conf_file = "/config/app_conf.yml"
-    log_conf_file = "/config/log_conf.yml"
-else:
-    print("In Dev Environment")
-    app_conf_file = "app_conf.yml"
-    log_conf_file = "log_conf.yml"
+# if "TARGER_ENV" in os.environ and os.environ["TARGET_ENV"] == "test":
+#     print("In Test Environment")
+#     app_conf_file = "/config/app_conf.yml"
+#     log_conf_file = "/config/log_conf.yml"
+# else:
+#     print("In Dev Environment")
+#     app_conf_file = "app_conf.yml"
+#     log_conf_file = "log_conf.yml"
 
 #read from app_conf.yaml
 with open('app_conf.yml', 'r') as f:
@@ -134,12 +135,15 @@ def process_messages():
 
 app = connexion.FlaskApp(__name__, specification_dir='')
 app.add_api("openapi.yaml", base_path="/events_stats",strict_validation=True, validate_responses=True)
-app.add_middleware( CORSMiddleware, 
-                   position=MiddlewarePosition.BEFORE_EXCEPTION, 
-                   allow_origins=["*"], 
-                   allow_credentials=True, 
-                   allow_methods=["*"], 
-                   allow_headers=["*"], )
+# app.add_middleware( CORSMiddleware, 
+#                    position=MiddlewarePosition.BEFORE_EXCEPTION, 
+#                    allow_origins=["*"], 
+#                    allow_credentials=True, 
+#                    allow_methods=["*"], 
+#                    allow_headers=["*"], )
+if "TARGET_ENV" not in os.environ or os.environ["TARGET_ENV"] != "test":
+    CORS(app.app)
+    app.app.config['CORS_HEADERS'] = 'Content-Type'
 
 if __name__ == "__main__":
     if not os.path.exists("/data/event_stats.sqlite"):
