@@ -1,12 +1,12 @@
 /* UPDATE THESE VALUES TO MATCH YOUR SETUP */
 
-const STATS_API_URL =  "http://pdang-api.eastus.cloudapp.azure.com:8100/stats"
+const STATS_API_URL =  "http://pdang-api.eastus.cloudapp.azure.com/processing/stats" //"http://pdang-api.eastus.cloudapp.azure.com:8100/stats"
 const EVENTS_URL = {
-    switch_report: "http://pdang-api.eastus.cloudapp.azure.com:8110/switch_report", 
-    configuration_file: "http://pdang-api.eastus.cloudapp.azure.com:8110/configuration_file" 
+    switch_report: "http://pdang-api.eastus.cloudapp.azure.com/audit_log/switch_report", 
+    configuration_file: "http://pdang-api.eastus.cloudapp.azure.com/audit_log/configuration_file" 
 }
 
-const CODE_LOG_URL = "http://pdang-api.eastus.cloudapp.azure.com:8120/events_stats"
+const CODE_LOG_URL = "http://pdang-api.eastus.cloudapp.azure.com/events_stats"
 
 // This function fetches and updates the general statistics
 const getStats = (statsUrl) => {
