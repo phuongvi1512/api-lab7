@@ -198,6 +198,8 @@ def populate_stats():
             }
             msg_str = json.dumps(msg)
             log_producer.produce(str.encode(msg_str))
+        else:
+            pass
  
         #log msg number of events received
         logger.info(f"received {len(report_info)} reports and {len(cfile_info)} cfiles at {datetime.now()}")
