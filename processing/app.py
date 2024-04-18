@@ -166,22 +166,34 @@ def populate_stats():
         cfile_info = cfile_body.json()
 
         #publish if over threshold
-        if len(report_info) >= THRESHOLD or len(cfile_info) >= THRESHOLD:
+        if len(report_info) >= THRESHOLD:
             content = {
-                "code": "0004",
                 "event_id": f"{str(uuid.uuid4())}",
-                "trace_id": f"{str(uuid.uuid4())}",
                 "timestamp": f"{datetime.now()}",
                 "event_type": "switch_report",
                 "anomaly_type": "exceed_threshold",
-                "description": f"over threshold, value detected {len(report_info)}, threshold {THRESHOLD} exceeded {len(report_info) - THRESHOLD}",
-                "msg_text": "Code 0004. Number of events over threshold"
+                "description": f"over threshold for switch report, value detected {len(report_info)}, threshold {THRESHOLD} exceeded {len(report_info) - THRESHOLD}"
             }
             msg = {
-                "code": "0004",
                 "event_type": "switch_report",
                 "anomaly_type": "exceed_threshold",
-                "datetime": datetime.now().strftime('%Y-%m-%dT%H:%M:%S'),
+                # "datetime": datetime.now().strftime('%Y-%m-%dT%H:%M:%S'),
+                "payload": content
+            }
+            msg_str = json.dumps(msg)
+            log_producer.produce(str.encode(msg_str))
+        elif len(cfile_info) >= THRESHOLD:
+            content = {
+                "event_id": f"{str(uuid.uuid4())}",
+                "timestamp": f"{datetime.now()}",
+                "event_type": "configuration_file",
+                "anomaly_type": "exceed_threshold",
+                "description": f"over threshold for config file, value detected {len(cfile_info)}, threshold {THRESHOLD} exceeded {len(cfile) - THRESHOLD}"
+            }
+            msg = {
+                "event_type": "configuration_file",
+                "anomaly_type": "exceed_threshold",
+                # "datetime": datetime.now().strftime('%Y-%m-%dT%H:%M:%S'),
                 "payload": content
             }
             msg_str = json.dumps(msg)

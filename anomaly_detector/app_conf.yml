@@ -6,6 +6,7 @@ events:
   hostname: kafka
   port: 9092
   log_topic: event_log
+  default_threshold: 25 #same as app_conf in processing service
 retry:
   max_count: 5
   sleep_time: 4

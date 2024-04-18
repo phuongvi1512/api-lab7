@@ -1,6 +1,6 @@
 #copy from event_logger
 
-import datetime, json, os
+import datetime, json, os, uuid
 import logging.config
 from time import sleep
 import yaml
@@ -41,15 +41,48 @@ logger = logging.getLogger('basicLogger')
 logger.info("App Conf file: %s" % app_conf_file)
 logger.info("Log Conf file: %s" % log_conf_file)
 
-#time to sleep and retry count
+#time to sleep and retry count and default threshold
 SLEEP_TIME = app_config['retry']['sleep_time']
 MAX_RETRY_COUNT = app_config['retry']['max_count']
+THRESHOLD = app_config['events']['default_threshold']
 
-def add_anomalies_stats(payload):
-    pass
+logger.info(f"Default threshold value is {THRESHOLD}")
+
+def add_anomalies_stats(body):
+    """ Receives event and record in database """
+    DB_ENGINE = create_engine(f"sqlite:///{app_config['datastore']['filename']}")
+    Base.metadata.create_all(DB_ENGINE)
+
+    DB_SESSION = sessionmaker(bind=DB_ENGINE)
+    session = DB_SESSION()
+    anomaly_record = Anomaly( trace_id=f"{str(uuid.uuid4())}",
+        event_id=body["event_id"],
+        event_type=body['event_type'], 
+        anomaly_type=body['anomaly_type'],
+        description=body['description'])
+
+    session.add(anomaly_record)
+    session.commit()
+    session.close()
+
+    logger.debug(f"stored event add record {body['trace_id']} with anomaly type {body['anomaly_type']} and event type {body['event_type']} into database")
+    return NoContent, 201
 
 def get_anomalies(anomaly_type):
-    pass
+    DB_ENGINE = create_engine(f"sqlite:///{app_config['datastore']['filename']}")
+    Base.metadata.create_all(DB_ENGINE)
+
+    DB_SESSION = sessionmaker(bind=DB_ENGINE)
+    session = DB_SESSION()
+
+    #query the stats_file table to get the latest stats
+    stats = session.query(Anomaly).order_by(Anomaly.date_created.desc()).filter(Anomaly.anomaly_type == anomaly_type)
+
+    print(stats)
+
+    return stats, 200
+
+
 
 def process_messages():
     """ process event messages"""
@@ -77,13 +110,14 @@ def process_messages():
                 logger.info("Message: %s" % msg)
 
                 payload = msg['payload']
+                logger.info(f"In JSON format, payload is {payload}")
 
-                if msg['code'] in ["0003", "0004"]:
+                if msg['anomaly_type'] == "exceed_threshold":
                     add_anomalies_stats(payload)
                     #add log if success or fail
-                    logger.info(f"Added event with id {payload['trace_id']} message code {payload['code']}")
+                    logger.info(f"Added event with id {payload['event_id']} anomaly type is {payload['anomaly_type']}")
                 else:
-                    logger.error("Unknown event msg code: %s" % msg['code'])
+                    logger.error("Unknown anomaly type: %s" % msg['anomaly_type'])
                 #commit the new message as being read
                 consumer.commit_offsets()
             #break the while loop if things work
