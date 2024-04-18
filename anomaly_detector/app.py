@@ -68,7 +68,7 @@ def add_anomalies_stats(body):
     logger.debug(f"stored event add record {body['trace_id']} with anomaly type {body['anomaly_type']} and event type {body['event_type']} into database")
     return NoContent, 201
 
-def get_anomalies(anomaly_type):
+def get_anomalies(type):
     DB_ENGINE = create_engine(f"sqlite:///{app_config['datastore']['filename']}")
     Base.metadata.create_all(DB_ENGINE)
 
@@ -76,7 +76,7 @@ def get_anomalies(anomaly_type):
     session = DB_SESSION()
 
     #query the stats_file table to get the latest stats
-    stats = session.query(Anomaly).order_by(Anomaly.date_created.desc()).filter(Anomaly.anomaly_type == f"{anomaly_type}")
+    stats = session.query(Anomaly).order_by(Anomaly.date_created.desc()).filter(Anomaly.anomaly_type == type)
 
     print(json.dumps(stats))
 
