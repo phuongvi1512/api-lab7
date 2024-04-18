@@ -45,7 +45,7 @@ logger.info("Log Conf file: %s" % log_conf_file)
 SLEEP_TIME = app_config['retry']['sleep_time']
 MAX_RETRY_COUNT = app_config['retry']['max_count']
 
-def get_anomalies(index):
+def get_anomalies(anomaly_type):
     pass
 
 

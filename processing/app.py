@@ -51,6 +51,8 @@ THRESHOLD = app_config['events']['default_threshold']
 MAX_RETRY_COUNT = app_config['retry']['max_count']
 SLEEP_TIME = app_config['retry']['sleep_time']
 
+kafka_hostname = "%s:%d"%(app_config['events']['hostname'],
+                    app_config['events']['port'])
 logger.info("try to connect to logger kafka")
 retry_count = 0
 #connect to Kafka and log if app successfully start
@@ -58,7 +60,7 @@ while retry_count < MAX_RETRY_COUNT:
     #logging when trying to connect to Kafka
     logger.info(f"Trying to connect to Kafka {retry_count + 1}th time")
     try:
-        client = KafkaClient(hosts=hostname)
+        client = KafkaClient(hosts=kafka_hostname)
         
         #publish msg to event_log if successfully start and connect to Kafka
         #ready to consume messages from events topic
