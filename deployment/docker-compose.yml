@@ -55,21 +55,21 @@ services:
     depends_on:
       - "processing"
 
-  event_logger:
-    build: ../event_logger
-    volumes:
-      - /home/azureuser/config/event_logger:/config
-      - /home/azureuser/logs/:/logs
-      - logging-db:/data
-    ports:
-      - "8120"
-    networks:
-      - "api.network"
-    hostname: event_logger
-    depends_on:
-      - "processing"
-      - "receiver"
-      - "storage"
+  # event_logger:
+  #   build: ../event_logger
+  #   volumes:
+  #     - /home/azureuser/config/event_logger:/config
+  #     - /home/azureuser/logs/:/logs
+  #     - logging-db:/data
+  #   ports:
+  #     - "8120"
+  #   networks:
+  #     - "api.network"
+  #   hostname: event_logger
+  #   depends_on:
+  #     - "processing"
+  #     - "receiver"
+  #     - "storage"
 
   dashboard:
     build: ../dashboard
@@ -96,21 +96,21 @@ services:
     networks:
       - "api.network"
 
-  # anomaly_detector:
-  #   build: ../anomaly_detector
-  #   volumes:
-  #     - /home/azureuser/config/anomaly_detector:/config
-  #     - /home/azureuser/logs/:/logs
-  #     - anomaly_detector-db:/data
-  #   ports:
-  #     - "8130"
-  #   networks:
-  #     - "api.network"
-  #   hostname: anomaly_detector
-  #   depends_on:
-  #     - "processing"
-  #     - "receiver"
-  #     - "storage"
+  anomaly_detector:
+    build: ../anomaly_detector
+    volumes:
+      - /home/azureuser/config/anomaly_detector:/config
+      - /home/azureuser/logs/:/logs
+      - anomaly_detector-db:/data
+    ports:
+      - "8130"
+    networks:
+      - "api.network"
+    hostname: anomaly_detector
+    depends_on:
+      - "processing"
+      - "receiver"
+      - "storage"
 
   zookeeper:
     image: wurstmeister/zookeeper

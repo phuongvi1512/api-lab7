@@ -169,12 +169,18 @@ def populate_stats():
         if len(report_info) >= THRESHOLD or len(cfile_info) >= THRESHOLD:
             content = {
                 "code": "0004",
+                "event_id": f"{str(uuid.uuid4())}",
                 "trace_id": f"{str(uuid.uuid4())}",
                 "timestamp": f"{datetime.now()}",
+                "event_type": "switch_report",
+                "anomaly_type": "exceed_threshold",
+                "description": f"over threshold, value detected {len(report_info)}, threshold {THRESHOLD} exceeded {len(report_info) - THRESHOLD}",
                 "msg_text": "Code 0004. Number of events over threshold"
             }
             msg = {
                 "code": "0004",
+                "event_type": "switch_report",
+                "anomaly_type": "exceed_threshold",
                 "datetime": datetime.now().strftime('%Y-%m-%dT%H:%M:%S'),
                 "payload": content
             }
