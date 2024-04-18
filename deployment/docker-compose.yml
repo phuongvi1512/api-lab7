@@ -96,6 +96,22 @@ services:
     networks:
       - "api.network"
 
+  anomaly_detector:
+    build: ../anomaly_detector
+    volumes:
+      - /home/azureuser/config/anomaly_detector:/config
+      - /home/azureuser/logs/:/logs
+      - anomaly_detector-db:/data
+    ports:
+      - "8130"
+    networks:
+      - "api.network"
+    hostname: anomaly_detector
+    depends_on:
+      - "processing"
+      - "receiver"
+      - "storage"
+
   zookeeper:
     image: wurstmeister/zookeeper
     ports:
@@ -151,6 +167,7 @@ volumes:
   my-db:
   processing-db:
   logging-db:
+  anomaly_detector-db:
 
 networks:
   api.network:
