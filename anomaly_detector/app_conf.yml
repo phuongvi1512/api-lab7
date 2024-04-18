@@ -1,0 +1,11 @@
+#copy from app_conf in event_logger
+version: 1
+datastore:
+  filename: /data/anomalies.sqlite
+events:
+  hostname: kafka
+  port: 9092
+  log_topic: event_log
+retry:
+  max_count: 5
+  sleep_time: 4
