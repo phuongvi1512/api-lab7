@@ -6,7 +6,7 @@ def create_db():
 
     #create table event_stats_file
     c.execute('''CREATE TABLE anomaly
-                  (id INTEGER PRIMARY KEY ASC, 
+                  (id INTEGER PRIMARY KEY AUTOINCREMENT, 
                     event_id VARCHAR(250) NOT NULL,
                     trace_id VARCHAR(250) NOT NULL,
                     event_type VARCHAR(100) NOT NULL,
