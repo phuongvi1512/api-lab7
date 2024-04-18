@@ -17,7 +17,7 @@ from pykafka.common import OffsetType
 from threading import Thread
 from base import Base
 from create_db import create_db
-from event_stats import EventStats
+from anomaly import Anomaly
 
 if "TARGER_ENV" in os.environ and os.environ["TARGET_ENV"] == "test":
     print("In Test Environment")
