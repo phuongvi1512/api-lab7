@@ -76,6 +76,7 @@ def get_anomalies(anomaly_type):
         rows = c.fetchall()
         stats = {row for row in rows }
         print(c)
+        print(f"STATS is {stats}")
         conn.commit()
         conn.close()
         return stats, 200
