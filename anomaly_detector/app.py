@@ -77,11 +77,16 @@ def get_anomalies(anomaly_type):
 
     #query the stats_file table to get the latest stats
     stats = session.query(Anomaly).order_by(Anomaly.date_created.desc()).filter(Anomaly.anomaly_type == anomaly_type)
-    print(f"STATS is {stats}")
-    print(stats.to_dict())
     session.close()
+    
+    if stats is None:
+        return NoContent, 400
+    else:
+        print(f"STATS is {stats}")
+        print(stats.to_dict())
+    
 
-    return stats.to_dict(), 200
+        return stats.to_dict(), 200
 
 
 
