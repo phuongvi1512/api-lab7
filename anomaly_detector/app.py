@@ -72,13 +72,15 @@ def get_anomalies(anomaly_type):
     try:
         conn = sqlite3.connect(f'{app_config["datastore"]["filename"]}')
         c = conn.cursor()
-        c.execute(f"SELECT * from anomaly where anomaly_type == f{anomaly_type}")
-
+        c.execute(f"SELECT * from anomaly where anomaly_type == ?", (anomaly_type, ))
+        rows = c.fetchall()
+        stats = {row for row in rows }
         print(c)
         conn.commit()
         conn.close()
+        return stats, 200
     except Exception as e:  
-        logger.error(f"failed to insert updated stats to the sqlite database at {datetime.now()} :%s", e)
+        logger.error(f"failed to insert updated stats to the sqlite database  :%s", e)
         return NoContent, 404
     # DB_ENGINE = create_engine(f"sqlite:///{app_config['datastore']['filename']}")
     # Base.metadata.create_all(DB_ENGINE)
