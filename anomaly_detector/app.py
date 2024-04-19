@@ -76,9 +76,9 @@ def get_anomalies(anomaly_type):
     session = DB_SESSION()
 
     #query the stats_file table to get the latest stats
-    stats = session.query(Anomaly).order_by(Anomaly.date_created.desc()).filter(Anomaly.anomaly_type == anomaly_type)
+    stats = session.query(Anomaly).order_by(Anomaly.date_created.desc()).filter(Anomaly.anomaly_type == "exceed_threshold")
     session.close()
-    
+
     if stats is None:
         return NoContent, 400
     else:
