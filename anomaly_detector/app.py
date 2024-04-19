@@ -3,7 +3,7 @@
 import datetime, json, os, uuid
 import logging.config
 from time import sleep
-import yaml
+import yaml, sqlite3
 from flask_cors import CORS
 import connexion
 from connexion import NoContent
@@ -69,24 +69,35 @@ def add_anomalies_stats(body):
     return NoContent, 201
 
 def get_anomalies(anomaly_type):
-    DB_ENGINE = create_engine(f"sqlite:///{app_config['datastore']['filename']}")
-    Base.metadata.create_all(DB_ENGINE)
+    try:
+        conn = sqlite3.connect(f'{app_config["datastore"]["filename"]}')
+        c = conn.cursor()
+        c.execute(f"SELECT * from anomaly where anomaly_type == f{anomaly_type}")
 
-    DB_SESSION = sessionmaker(bind=DB_ENGINE)
-    session = DB_SESSION()
+        print(c)
+        conn.commit()
+        conn.close()
+    except Exception as e:  
+        logger.error(f"failed to insert updated stats to the sqlite database at {datetime.now()} :%s", e)
+        return NoContent, 404
+    # DB_ENGINE = create_engine(f"sqlite:///{app_config['datastore']['filename']}")
+    # Base.metadata.create_all(DB_ENGINE)
 
-    #query the stats_file table to get the latest stats
-    stats = session.query(Anomaly).order_by(Anomaly.date_created.desc()).filter(Anomaly.anomaly_type == "exceed_threshold")
-    session.close()
+    # DB_SESSION = sessionmaker(bind=DB_ENGINE)
+    # session = DB_SESSION()
 
-    if stats is None:
-        return NoContent, 400
-    else:
-        print(f"STATS is {stats}")
-        print(stats.to_dict())
+    # #query the stats_file table to get the latest stats
+    # stats = session.query(Anomaly).order_by(Anomaly.date_created.desc()).filter(Anomaly.anomaly_type == "exceed_threshold")
+    # session.close()
+
+    # if stats is None:
+    #     return NoContent, 400
+    # else:
+    #     print(f"STATS is {stats}")
+    #     print(stats.to_dict())
     
 
-        return stats.to_dict(), 200
+    #     return stats.to_dict(), 200
 
 
 
