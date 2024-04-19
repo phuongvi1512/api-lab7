@@ -74,12 +74,11 @@ def get_anomalies(anomaly_type):
         c = conn.cursor()
         c.execute(f"SELECT * from anomaly where anomaly_type == ?", (anomaly_type, ))
         rows = c.fetchall()
-        stats = {row for row in rows }
         print(c)
-        print(f"STATS is {stats}")
+        print(f"STATS is {rows}")
         conn.commit()
         conn.close()
-        return stats, 200
+        return rows, 200
     except Exception as e:  
         logger.error(f"failed to insert updated stats to the sqlite database  :%s", e)
         return NoContent, 404
