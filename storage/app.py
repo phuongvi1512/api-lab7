@@ -1,10 +1,10 @@
-from base import Base
-from create_tables_mysql import create_tables
-from switch_report import SwitchReport
-from configuration_file import ConfigurationFile
-import yaml,  datetime, json, os, uuid
+import datetime
+import json
+import os
+import uuid
 import logging.config
 from time import sleep
+import yaml
 import connexion
 from connexion import NoContent
 from connexion.middleware import MiddlewarePosition
@@ -15,6 +15,10 @@ from sqlalchemy.orm import sessionmaker
 from pykafka import KafkaClient
 from pykafka.common import OffsetType
 from threading import Thread
+from base import Base
+from create_tables_mysql import create_tables
+from switch_report import SwitchReport
+from configuration_file import ConfigurationFile
 
 if "TARGER_ENV" in os.environ and os.environ["TARGET_ENV"] == "test":
     print("In Test Environment")
