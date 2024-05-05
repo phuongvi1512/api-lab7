@@ -1,12 +1,10 @@
-import datetime, json, os
+import json, os
 import logging.config
 from time import sleep
 import yaml
 from flask_cors import CORS
 import connexion
 from connexion import NoContent
-from connexion.middleware import MiddlewarePosition
-from starlette.middleware.cors import CORSMiddleware
 from sqlalchemy import create_engine
 from sqlalchemy import and_, func
 from sqlalchemy.orm import sessionmaker
@@ -135,12 +133,7 @@ def process_messages():
 
 app = connexion.FlaskApp(__name__, specification_dir='')
 app.add_api("openapi.yaml", base_path="/event_logger",strict_validation=True, validate_responses=True)
-# app.add_middleware( CORSMiddleware, 
-#                    position=MiddlewarePosition.BEFORE_EXCEPTION, 
-#                    allow_origins=["*"], 
-#                    allow_credentials=True, 
-#                    allow_methods=["*"], 
-#                    allow_headers=["*"], )
+
 if "TARGET_ENV" not in os.environ or os.environ["TARGET_ENV"] != "test":
     CORS(app.app)
     app.app.config['CORS_HEADERS'] = 'Content-Type'
