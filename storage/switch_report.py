@@ -17,9 +17,8 @@ class SwitchReport(Base):
     temperature = Column(Integer, nullable=False)
     date_created = Column(DateTime, nullable=False)
 
-    def __init__(self, trace_id, report_id, switch_id, timestamp, temperature, status): #id
+    def __init__(self, trace_id, report_id, switch_id, timestamp, temperature, status): 
         """ Initializes a switch report """
-        #self.id = id
         self.trace_id = trace_id
         self.report_id = report_id
         self.switch_id = switch_id

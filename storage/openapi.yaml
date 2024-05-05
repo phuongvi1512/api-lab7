@@ -2,17 +2,17 @@ openapi: 3.0.0
 info:
   description: This is a API for storage service
   version: "1.0.0"
-  title: Simple Inventory API
+  title: API for storage service
   contact:
     email: you@your-company.com
   license:
     name: Apache 2.0
-    url: 'http://www.apache.org/licenses/LICENSE-2.0.html'
+    url: "http://www.apache.org/licenses/LICENSE-2.0.html"
 tags:
   - name: admins
     description: Secured Networking Admin-only calls
   - name: manager
-    description: Mill Manager to inspect the status and temperature of physical switches/routers 
+    description: Mill Manager to inspect the status and temperature of physical switches/routers
 paths:
   /storage_cfile:
     get:
@@ -21,7 +21,7 @@ paths:
       summary: gets configuration file reading
       operationId: app.get_config_file_reading
       description: gets configuration file readings added after a timestamp
-      parameters: 
+      parameters:
         - name: start_timestamp
           in: query
           description: time that the reading returns after
@@ -37,14 +37,14 @@ paths:
             format: date-time
             example: 2016-08-29T09:12:33.001Z
       responses:
-        '200':
+        "200":
           description: successfully returned a list of reading
           content:
             application/json:
               schema:
                 type: array
                 items:
-                  $ref: '#/components/schemas/ConfigurationFile'
+                  $ref: "#/components/schemas/ConfigurationFile"
   /storage_report:
     get:
       tags:
@@ -52,7 +52,7 @@ paths:
       summary: gets report reading
       operationId: app.get_switch_report_reading
       description: gets switch report readings added after a timestamp
-      parameters: 
+      parameters:
         - name: start_timestamp
           in: query
           description: time that the reading returns after
@@ -68,20 +68,20 @@ paths:
             format: date-time
             example: 2016-08-29T09:12:33.001Z
       responses:
-        '200':
+        "200":
           description: successfully returned a list of reading
           content:
             application/json:
               schema:
                 type: array
                 items:
-                  $ref: '#/components/schemas/SwitchReport'                
+                  $ref: "#/components/schemas/SwitchReport"
 components:
   schemas:
     SwitchReport:
       type: object
       required:
-        - trace_id 
+        - trace_id
         - report_id
         - switch_id
         - status
@@ -91,11 +91,11 @@ components:
         trace_id:
           type: string
           format: uuid
-          example: d290f1ee-6c54-4b01-90e6-d701748f0851   
-        report_id: 
+          example: d290f1ee-6c54-4b01-90e6-d701748f0851
+        report_id:
           type: string
           format: uuid
-          example: d290f1ee-6c54-4b01-90e6-d701748f0851   
+          example: d290f1ee-6c54-4b01-90e6-d701748f0851
         switch_id:
           type: string
           format: uuid
@@ -110,7 +110,7 @@ components:
         timestamp:
           type: string
           format: date-time
-          
+
     ConfigurationFile:
       type: object
       required:
@@ -120,21 +120,21 @@ components:
         - switch_id
         - timestamp
       properties:
-        trace_id: 
+        trace_id:
           type: string
           format: uuid
-          example: d290f1ee-6c54-4b01-90e6-d701748f0851   
+          example: d290f1ee-6c54-4b01-90e6-d701748f0851
         file_id:
           type: string
           format: uuid
           example: d290f1ee-6c54-4b01-90e6-d701748f0851
         switch_id:
           type: string
-          format: uuid         
+          format: uuid
         file_size:
           type: integer
           example: 100
         timestamp:
           type: string
           format: date-time
-          example: '2017-07-21T17:32:28Z'
+          example: "2017-07-21T17:32:28Z"

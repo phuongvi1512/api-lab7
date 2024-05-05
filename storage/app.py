@@ -35,17 +35,12 @@ with open('log_conf.yml', 'r') as f:
     logging.config.dictConfig(log_config)
 logger = logging.getLogger('basicLogger')
 
-logger.info("App Conf file: %s" % app_conf_file)
-logger.info("Log Conf file: %s" % log_conf_file)
+logger.info(f"App Conf file: {app_conf_file}")
+logger.info(f"Log Conf file: {log_conf_file}")
 
 #connect to database mysql
 with open('app_conf.yml', 'r') as f: 
     app_config = yaml.safe_load(f.read())
-username = app_config['datastore']['user']
-password = app_config['datastore']['password']
-hostname = app_config['datastore']['hostname']
-port = app_config['datastore']['port']
-db = app_config['datastore']['db']
 
 #time to sleep and retry count
 SLEEP_TIME = app_config['retry']['sleep_time']
@@ -57,9 +52,18 @@ with open('log_conf.yml', 'r') as f:
     logging.config.dictConfig(log_config)
 logger = logging.getLogger('basicLogger')
 
-DB_ENGINE = create_engine(f"mysql+pymysql://{username}:{password}@{hostname}:{port}/{db}", pool_size=10, pool_recycle=3600, pool_pre_ping=True)
+DB_ENGINE = create_engine(f"mysql+pymysql://{app_config['datastore']['user']}
+                          :{app_config['datastore']['password']}
+                          @{app_config['datastore']['hostname']}
+                          :{app_config['datastore']['port']}
+                          /{app_config['datastore']['db']}", 
+                          pool_size=10, 
+                          pool_recycle=3600, 
+                          pool_pre_ping=True)
 #add log
-logger.info(f"connect to DB {db}. hostname: {hostname}, port: {port}")
+logger.info(f"connect to DB {app_config['datastore']['db']}. 
+                         hostname: {app_config['datastore']['hostname']}, 
+                         port: {app_config['datastore']['port']}")
 #create database and tables if not exist
 
 Base.metadata.bind = DB_ENGINE
@@ -105,6 +109,10 @@ def add_config_file(body):
 
 def get_config_file_reading(start_timestamp, end_timestamp):
     #if result is returned, return 200, else return 404
+    """
+    return list of config file between certain time frame (start_time, end_time)
+    if not existed, return 404
+    """
     session = DB_SESSION()
 
     start_timestamp_datetime = datetime.datetime.strptime(start_timestamp, "%Y-%m-%d %H:%M:%S.%f")
@@ -117,10 +125,14 @@ def get_config_file_reading(start_timestamp, end_timestamp):
     results_list = [reading.to_dict() for reading in results]
 
     #add debug msg
-    logger.info("Query for Config file reading after %s return %d results" %(start_timestamp, len(results_list)))   
+    logger.info(f"Query for Config file reading after {start_timestamp} return {len(results_list)} results")
     return results_list, 200
 
 def get_switch_report_reading(start_timestamp, end_timestamp):
+    """
+    return list of switch report between certain time frame (start_time, end_time)
+    if not existed, return 404
+    """
     session = DB_SESSION()
 
     start_timestamp_datetime = datetime.datetime.strptime(start_timestamp, "%Y-%m-%d %H:%M:%S.%f")
@@ -133,16 +145,20 @@ def get_switch_report_reading(start_timestamp, end_timestamp):
     results_list = [reading.to_dict() for reading in results]
 
     #add debug msg
-    logger.info("Query for switch report reading after %s return %d results" %(start_timestamp, len(results_list)))
+    logger.info(f"Query for switch report reading after {start_timestamp} return {len(results_list)} results")
     return results_list, 200
 
 
 def process_messages():
-    """ process event messages"""
+    """ 
+    process event messages to consumer and 
+    log message with log_producer when successfuly connect to Kafka
+    """
     # retry logic, wait until kafka is up
     retry_count = 0
-    hostname = "%s:%d"%(app_config['events']['hostname'],
-                        app_config['events']['port'])
+    # hostname = "%s:%d"%(app_config['events']['hostname'],
+    #                     app_config['events']['port'])
+    hostname = f"{app_conf_file['events']['hostname']}:{app_conf_file['events']['port']}"
     while retry_count < MAX_RETRY_COUNT:
         #logging when trying to connect to Kafka
         logger.info(f"Trying to connect to Kafka {retry_count + 1}th time")
@@ -177,7 +193,7 @@ def process_messages():
             for msg in consumer:
                 msg_str = msg.value.decode('utf-8')
                 msg = json.loads(msg_str)
-                logger.info("Message: %s" % msg)
+                logger.info(f"Message: {msg}")
 
                 payload = msg['payload']
 
@@ -189,7 +205,7 @@ def process_messages():
                     add_config_file(payload)
                     logger.info(f"Added configuration file with id {payload['file_id']}")
                 else:
-                    logger.error("Unknown event type: %s" % msg['type'])
+                    logger.error(f"Unknown event type: {msg['type']}")
                 #commit the new message as being read
                 consumer.commit_offsets()
             #break the while loop if things work
