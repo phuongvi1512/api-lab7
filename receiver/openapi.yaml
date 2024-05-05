@@ -2,7 +2,7 @@ openapi: 3.0.0
 info:
   description: This is API for receiver
   version: "1.0.0"
-  title: Simple Inventory API
+  title: Receiver API
   contact:
     email: you@your-company.com
   license:

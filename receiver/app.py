@@ -1,4 +1,5 @@
-import json, os
+import json 
+import os
 import logging, logging.config
 import uuid
 from time import sleep
@@ -26,14 +27,14 @@ with open('log_conf.yml', 'r') as f:
     logging.config.dictConfig(log_config)
 logger = logging.getLogger('basicLogger')
 
-logger.info("App Conf file: %s" % app_conf_file)
-logger.info("Log Conf file: %s" % log_conf_file)
+logger.info(f"App Conf file: ${app_conf_file}")
+logger.info(f"Log Conf file: ${log_conf_file}")
 
 with open('app_conf.yml', 'r') as f: 
     app_config = yaml.safe_load(f.read())  
-    hostname = app_config['events']['hostname']
-    port = app_config['events']['port']
-    topic_name = app_config['events']['topic']
+    # hostname = app_config['events']['hostname']
+    # port = app_config['events']['port']
+    # topic_name = app_config['events']['topic']
 
 #time to sleep and retry count
 SLEEP_TIME = app_config['retry']['sleep_time']
@@ -48,8 +49,10 @@ logger = logging.getLogger('basicLogger')
 
 #connect to Kafka broker
 retry_count = 0
-hostname = "%s:%d"%(app_config['events']['hostname'], 
-                    app_config['events']['port'])
+# hostname = "%s:%d"%(app_config['events']['hostname'], 
+#                     app_config['events']['port'])
+hostname = f"${app_conf_file['events']['hostname']}:${app_conf_file['events']['port']}"
+
 while retry_count < MAX_RETRY_COUNT:
     #logging when trying to connect to Kafka
     logger.info(f"Trying to connect to Kafka {retry_count + 1}th time")
